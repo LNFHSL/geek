@@ -26,22 +26,30 @@ class Users extends Controller{
 	//注册 待完善
 	 public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'mobile' => 'required',
-            'password' => 'required',
-        ]);
-        if ($validator->fails()) {
-           return (['code'=>'-1','msg'=>'验证码错误']);         
-        }
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);   //加密密码
-        $user = User::create($input);  
-        $success['token'] =  $user->createToken('MyApp')->accessToken;
-        $success['mobile'] = $user->mobile;
-
-           return (['code'=>'0','msg'=>'注册成功']);
-    }
-	 
+    	$ValidCode=request('ValidCode');
+		$list=db::table('validcode')->where([['mobile',request('mobile')],['ValidCode',request('ValidCode')]])->get();
+		
+		if ($list->count()){
+	        $validator = Validator::make($request->all(), [
+	            'mobile' => 'required',
+	            'password' => 'required',
+	        ]);
+	        if ($validator->fails()) {
+	           return (['code'=>'-1','msg'=>'验证码错误']);         
+	        }
+	        $input = $request->all();
+	        $input['password'] = bcrypt($input['password']);   //加密密码
+	        $user = User::create($input);  
+	        $success['token'] =  $user->createToken('MyApp')->accessToken;
+	        $success['mobile'] = $user->mobile;
+	       db::table('validcode')->where('mobile',request('mobile'))->delete();
+	           return (['code'=>'0','msg'=>'注册成功']);
+	          }
+			
+		else{
+			return  (['code'=>'-2','msg'=>'验证码错误']);
+		}
+	}
 	 
 	 //手机验证码
 	 public function getValidCode(){
