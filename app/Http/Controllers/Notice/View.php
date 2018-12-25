@@ -1,8 +1,8 @@
 <?php 
 /**
- * 公告类接口
+ * 公告查看类接口
  */
-namespace App\Http\Controllers\NOTICE;
+namespace App\Http\Controllers\Notice;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Db;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-class NoticeInterface extends Controller{
+class View extends Controller{
     public $user=null;
 	public function __construct () {
         $this->user=Auth::user();

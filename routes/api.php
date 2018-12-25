@@ -40,45 +40,45 @@ Route::post('user/uploadJoinPic','My@uploadJoinPic');
  * 首页界面接口
  */
 // 获取导航
-Route::get('nav/getNavCate','HOME\HomeInterface@gethomenav');
+Route::get('nav/getNavCate','Home\View@gethomenav');
 // 童星邀约
-Route::post('index/inviteBaby','HOME\HomeInterface@childInvite');
+Route::post('index/inviteBaby','Home\View@childInvite');
 // 获取轮播
-Route::get('Index/getSwriper','HOME\HomeInterface@getBanner');
+Route::get('Index/getSwriper','Home\View@getBanner');
  // 获取童星萌娃详情
-Route::post('index/getbabydetial','HOME\HomeInterface@getChildDetail');
+Route::post('index/getbabydetial','Home\View@getChildDetail');
  // 获取筛选童星
-Route::post('index/getFilterbaby','HOME\HomeInterface@getFilterChild');
+Route::post('index/getFilterbaby','Home\View@getFilterChild');
  // 获取头条
-Route::get('Index/getTops','HOME\HomeInterface@getHeadTiao');
+Route::get('Index/getTops','Home\View@getHeadTiao');
  // 获取其他推荐童星
-Route::post('index/gettuijianbaby2','HOME\HomeInterface@getOhterRecommendChild');
+Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
  // 获取推荐童星
-Route::post('index/gettuijianbaby','HOME\HomeInterface@getRecommendChild');
+Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 
 
 /**
  * 公告类接口
  */
 // 获取已参加的萌娃
-Route::get('notice/getStarBaby','NOTICE\NoticeInterface@alreadyJoinChild');
+Route::get('notice/getStarBaby','Notice\View@alreadyJoinChild');
 // 获取公告列表
-Route::post('notice/getNotice','NOTICE\NoticeInterface@getNoticeList');
+Route::post('notice/getNotice','Notice\View@getNoticeList');
 // 获取公告筛选地区
-Route::get('notice/getArea','NOTICE\NoticeInterface@getNoticeFilterPlace');
+Route::get('notice/getArea','Notice\View@getNoticeFilterPlace');
 // 上传图片测试
-Route::post('notice/testUpLoad','NOTICE\NoticeInterface@unloadImgTest');
+Route::post('notice/testUpLoad','Notice\View@unloadImgTest');
 // 获取公告筛选条件
-Route::get('notice/getFilter','NOTICE\NoticeInterface@getNoticeFilterCondition');
+Route::get('notice/getFilter','Notice\View@getNoticeFilterCondition');
 // 获取热门公告
-Route::get('notice/getHotNotice','NOTICE\NoticeInterface@geHotNotice');
+Route::get('notice/getHotNotice','Notice\View@geHotNotice');
  
 // 获取通告详情    
-Route::post('notice/getNoticeInfo','NOTICE\NoticeInterface@getNoticeDetail');
+Route::post('notice/getNoticeInfo','Notice\View@getNoticeDetail');
 // 获取报名时童星角色的价格类型
-Route::post('notice/getStarsForSignUp','NOTICE\NoticeInterface@getEnrollChildPriceType');
+Route::post('notice/getStarsForSignUp','Notice\View@getEnrollChildPriceType');
 //报名
-Route::post('notice/signUp','NOTICE\NoticeInterface@enroll');
+Route::post('notice/signUp','Notice\View@enroll');
 
 // 吴同学end
 

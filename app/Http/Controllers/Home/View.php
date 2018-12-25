@@ -1,15 +1,15 @@
 <?php
  /**
-  * 主页接口集成
+  * 主页查看接口集成
   */
-namespace App\Http\Controllers\HOME;
+namespace App\Http\Controllers\Home;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Db;
 use Illuminate\Support\Facades\Input;
  
-class HomeInterface extends Controller
+class View extends Controller
 {
      public function __construct () {
 
