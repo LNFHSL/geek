@@ -69,7 +69,7 @@ class Users extends Controller{
 		);
 		$list_two=db::table('validcode')->where('mobile', $mobile)->get();
 					
-		if(!$list->count()){
+		if($list_two->count()){
 		 db::table('validcode')->where('mobile', $mobile)->update(["validcode"=>$rand]);
 		}else{
 		 db::table('validcode')->insert(["mobile"=>$mobile,"validcode"=>$rand]);
