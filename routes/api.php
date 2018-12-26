@@ -55,6 +55,8 @@ Route::get('Index/getTops','Home\View@getHeadTiao');
 Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
  // 获取推荐童星
 Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
+// 获取分类详情
+Route::post('home/getCateChild','Home\View@getCateChild');
 
 
 /**

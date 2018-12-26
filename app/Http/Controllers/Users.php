@@ -101,7 +101,8 @@ class Users extends Controller{
     public function getMessage(){
     	$token=input('token');
 			
-    }
+	}
+
 	
 	
 }        
