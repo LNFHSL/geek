@@ -41,11 +41,7 @@ class View extends Controller
      function SQLSelect($who,$where){
          // 参数区别谁调用以便进行不同的查询
        switch ($who){
-            // 导航查询
-            case 'gethomenav':
-                 $gethomenav = DB::table('gethomenav')->get();
-                 echo $gethomenav;
-            break;
+            
             // 获取推荐童星
             case 'getRecommendChild':
                  $getRecommendChild = DB::table('baby_info')->get();
@@ -80,9 +76,34 @@ class View extends Controller
 
 
 
-// 获取导航
-     function gethomenav(){
-         $this->SQLSelect('gethomenav',null);
+// 获取分类
+     function getNavCate(){
+          $nav_list = DB::table('nav_cate')->get();
+              
+          $rtn_data_a = [];
+          foreach ($nav_list as $key => $value) {
+              if ($value->parent_id>0) {
+                    //子分类
+                    $value->data_name = $value->name;
+                    $rtn_data_a[$value->parent_id]->data[] = $value;
+              }else{
+                    //     一级分类：活动、通告
+                    $rtn_data_a[$value->id] = $value;
+                 
+              }
+          }
+          return array_values($rtn_data_a);
+       
+     }
+
+     // 获取子分类
+     function getCateChild(){
+          $id = request("id");
+          $nav_list = DB::table('nav_cate')
+               ->where("parent_id",$id)
+               ->get();
+        
+          return $nav_list;
        
      }
 // 童星邀约  

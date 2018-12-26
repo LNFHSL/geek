@@ -40,7 +40,7 @@ Route::post('user/uploadJoinPic','My@uploadJoinPic');
  * 首页界面接口
  */
 // 获取导航
-Route::get('nav/getNavCate','Home\View@gethomenav');
+Route::get('nav/getNavCate','Home\View@getNavCate');
 // 童星邀约
 Route::post('index/inviteBaby','Home\View@childInvite');
 // 获取轮播
@@ -74,9 +74,9 @@ Route::get('notice/getFilter','Notice\View@getNoticeFilterCondition');
 Route::get('notice/getHotNotice','Notice\View@geHotNotice');
  
 // 获取通告详情    
-Route::post('notice/getNoticeInfo','Notice\View@getNoticeDetail');
+Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
 // 获取报名时童星角色的价格类型
-Route::post('notice/getStarsForSignUp','Notice\View@getEnrollChildPriceType');
+Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 //报名
 Route::post('notice/signUp','Notice\View@enroll');
 
@@ -85,24 +85,24 @@ Route::post('notice/signUp','Notice\View@enroll');
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
-	
-	//收货地址
-//	Route::post('user/addMyAddress', 'My@addMyAddress');  //添加地址
-//	Route::post('user/delMyAddress', 'My@delMyAddress');  //删除地址
-//	Route::post('user/editMyAddress', 'My@editMyAddress');//修改地址
-//	Route::post('user/editMyAddressdz', 'My@editMyAddressdz');//修改默认地址
-//	Route::post('user/getMyAddress', 'My@getMyAddress');  //查询地址
+	 
 	
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
-	return $index->$action();
+		return $index->$action();
 	});
 	
 	Route::post('notice/{action}', function(App\Http\Controllers\Notice $index, $action){
-	return $index->$action();
+		return $index->$action();
 	});
 	
 	Route::post('baby/{action}', function(App\Http\Controllers\Baby $index, $action){
-	return $index->$action();
+		return $index->$action();
+	});
+	Route::post('manager_notice/{action}', function(App\Http\Controllers\Notice\Manager $index, $action){
+		return $index->$action();
+	});
+	Route::post('active/{action}', function(App\Http\Controllers\Active $index, $action){
+		return $index->$action();
 	});
 	
 });

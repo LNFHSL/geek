@@ -52,19 +52,7 @@ class View extends Controller{
     			  $geHotNotice = DB::table('notice_list')->get();
                   echo $geHotNotice;
     		break;
-    		// 热门通告详情据库获取
-    		case 'getNoticeDetail':
-    			  $getNoticeDetail = DB::table('notice_list')->where($where)->first();
-    			  $getNoticeDetail->job = DB::table('getnoticedetailjob')->where($where)->get();
-    			  $getNoticeDetail->babys = DB::table('getnoticedetailbabys')->where($where)->get();
-    			 
-                  echo json_encode($getNoticeDetail);
-    		break;
-    		//  获取报名时童星角色的价格类型数据库获取
-    		case 'getEnrollChildPriceType':
-    			  $getEnrollChildPriceType = DB::table('getenrollchildpricetype')->where($where)->get();
-                  echo $getEnrollChildPriceType;
-    		break;
+    		  
     		// 报名数据库获取
     		case 'enroll':
     			  $Enroll = DB::table('enroll')->where($where)->get(['code','msg','intergal']);
@@ -86,11 +74,50 @@ class View extends Controller{
     public function alreadyJoinChild(){
     	$this->SQLSelect('alreadyJoinChild',['id'=>request('id'),'noticeid'=>request('noticeid')]);
     }
-    // // 获取公告列表
+    // 获取公告列表
     public function getNoticeList(){
-         // 获取给前端的数据格式为[{'':'','data':[{},{}]},{},{}]
-
-        $notice_list = DB::table('notice_list')->get();
+       $where_eq_a = $notice_list = [];
+       $ida = [];
+       $is_in = false;
+       if (request('type')!='') {
+            $where_eq_a['film'] = request('type');
+       }elseif (request('equalpay')!='') {
+             $where_eq_a['talk_pay'] = request('equalpay');
+       }elseif (request('sex')!='') {
+              $is_in = true;
+              $juese_a = DB::table('notice_juese')
+              ->where(["sex"=>request('sex')])
+              ->get(["notice_id"]);
+       }
+       elseif (request('age')!='') {
+              $is_in = true;
+              list($ageStar,$ageEnd) = explode("-",str_replace("岁","",request('age'))); 
+              $juese_a = DB::table('notice_juese')
+              ->where('ageStar','<=',$ageStar)
+              ->where('ageEnd','>=',$ageEnd)
+              ->get(["notice_id"]);
+       }
+       elseif (request('height')!='') {
+              $is_in = true;
+              $heightEnd = str_replace("以下","",request('height')); 
+              $juese_a = DB::table('notice_juese')
+              ->where('heightEnd','>=',$heightEnd)
+              ->get(["notice_id"]);
+       }
+       if ($is_in) {
+              foreach ($juese_a as $key => $value) {
+                     $ida[] = $value->notice_id;
+              }  
+              $notice_list = DB::table('notice_list')
+              ->whereIn("id",$ida)
+              ->get();
+       }else{
+              $notice_list = DB::table('notice_list')
+              ->where($where_eq_a)
+              ->get(); 
+       }
+             
+      
     	return json_encode($notice_list);
     }
     // 获取公告筛选地区
@@ -123,7 +150,84 @@ class View extends Controller{
     }
     // 获取公告筛选条件
     public function getNoticeFilterCondition(request $request){
-    	echo '[{"id":19,"name":"\u7c7b\u578b","mapfield":"type","data":[{"id":23,"name":"\u5e73\u9762\u5e7f\u544a"},{"id":24,"name":"\u5f71\u89c6\u7ec4\u8baf"},{"id":25,"name":"\u7efc\u827a\u680f\u76ee"},{"id":26,"name":"\u8d70\u79c0\/\u6f14\u51fa"}]},{"id":20,"name":"\u6027\u522b","mapfield":"sex","data":[{"id":27,"name":"\u7537"},{"id":28,"name":"\u5973"}]},{"id":21,"name":"\u5e74\u9f84","mapfield":"age","data":[{"id":29,"name":"1\u52305\u5c81"},{"id":30,"name":"5-10\u5c81"}]},{"id":32,"name":"\u8eab\u9ad8","mapfield":"height","data":[{"id":33,"name":"100\u4ee5\u4e0b"},{"id":34,"name":"70\u4ee5\u4e0b"}]},{"id":35,"name":"\u7c7b\u578b","mapfield":"equalpay","data":[{"id":36,"name":"\u9762\u8bae"},{"id":37,"name":"\u7247\u916c"},{"id":38,"name":"\u4ed8\u8d39"},{"id":39,"name":"\u514d\u8d39"}]}]';
+       $nav_list = DB::table('nav_cate')
+       ->where("parent_id",1)
+       ->get(["id","name"]);    
+       $filter[] = [
+              'id'=>19,
+              'mapfield'=>'type',
+              'name'=>'类型',
+              'data'=> $nav_list
+       ];
+       $filter[] = [
+              'id'=>19,
+              'mapfield'=>'sex',
+              'name'=>'性别',
+              'data'=> [
+                     [
+                            'id'=>1,
+                            'name'=>'男'
+                     ],
+                     [
+                            'id'=>1,
+                            'name'=>'女'
+                     ]
+              ]
+       ];
+       $filter[] = [
+              'id'=>19,
+              'mapfield'=>'age',
+              'name'=>'年龄',
+              'data'=> [
+                     [
+                            'id'=>1,
+                            'name'=>'1-5岁'
+                     ],
+                     [
+                            'id'=>1,
+                            'name'=>'5-10岁'
+                     ]
+              ]
+       ];
+       $filter[] = [
+              'id'=>19,
+              'mapfield'=>'height',
+              'name'=>'身高',
+              'data'=> [
+                     [
+                            'id'=>1,
+                            'name'=>'100以下'
+                     ],
+                     [
+                            'id'=>1,
+                            'name'=>'70以下'
+                     ]
+              ]
+       ];
+       $filter[] = [
+              'id'=>19,
+              'mapfield'=>'equalpay',
+              'name'=>'类型',
+              'data'=> [
+                     [
+                            'id'=>1,
+                            'name'=>'面议'
+                     ],
+                     [
+                            'id'=>1,
+                            'name'=>'片酬'
+                     ],
+                     [
+                            'id'=>1,
+                            'name'=>'付费'
+                     ],
+                     [
+                            'id'=>1,
+                            'name'=>'免费'
+                     ]
+              ]
+       ];
+       return $filter;
     }
     // 获取热门公告
     public function geHotNotice(){
@@ -131,12 +235,36 @@ class View extends Controller{
         return $geHotNotice;
     }
     // 获取通告详情
-    public function getNoticeDetail(){
-    	$this->SQLSelect('getNoticeDetail',['id'=>request('id')]);
+    public function getNoticeInfo(){
+       $getNoticeDetail = DB::table('notice_list')->where(['id'=>request('id')])->first();
+       $juese_list = DB::table('notice_juese')->where(['notice_id'=>request('id')])->get();
+
+       foreach ($juese_list as $key => $value) {
+              if ($value->allAge) {
+                     $value->age = '不限';
+              }else{
+                     $value->age = $value->ageStar.'-'.$value->ageEnd.'岁';
+              }
+
+              if ( $value->allHeight) {
+                     $value->height = '不限';
+              }else{
+                     $value->height = $value->heightStar.'-'.$value->heightEnd.'cm';
+              }
+              $value->equalpay =  $getNoticeDetail->talk_pay;
+              $getNoticeDetail->job[]=$value;
+       }
+
+       $getNoticeDetail->babys = [];
+       $getNoticeDetail->isPart = false;
+       $getNoticeDetail->isCollection = false;
+      
+       echo json_encode($getNoticeDetail);
     }
     // 获取报名时童星角色的价格类型
-    public function getEnrollChildPriceType(){
-    	$this->SQLSelect('getEnrollChildPriceType',['noticeid'=>request('noticeid')]);
+    public function getStarsForSignUp(){
+          
+        return [];
     }
     // 报名
     public function enroll(){
