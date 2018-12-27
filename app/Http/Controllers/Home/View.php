@@ -18,13 +18,7 @@ class View extends Controller
 // 数据库插入
      function SQLInsert($who){
       // 童星邀约
-         switch ($who){
-            case 'childInvite':
-                DB::table('childinvite')->insert(
-                        ['contacter' => request('contacter'),'method' => request('method'),'babyid' => request('babyid')]
-                 );
-            break;
-         }
+       
        
      }
 // 数据库更新
@@ -98,12 +92,19 @@ class View extends Controller
        
      }
 // 童星邀约  
-     function childInvite(){
+     function inviteBaby(){
         if(request('contacter')&&request('method')&&request('babyid')){
-          $this->SQLInsert('childInvite',null);
-          echo '邀约成功';
+          DB::table('baby_invite')->insert(
+               [
+                    'contacter' => request('contacter'),
+                    'method' => request('method'),
+                    'babyid' => request('babyid'),
+                    'invite_time' => time(),
+               ]
+        );
+          return '邀约成功';
         }else{
-          echo '邀约失败';
+          return '邀约失败';
         }
      }
 // 获取轮播   

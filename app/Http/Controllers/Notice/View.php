@@ -233,7 +233,7 @@ class View extends Controller{
     }
     // 获取热门公告
     public function geHotNotice(){
-        $geHotNotice = DB::table('notice_list')->get();
+        $geHotNotice = DB::table('notice_list')->orderBy("id","desc")->get();
         return $geHotNotice;
     }
     // 获取通告详情

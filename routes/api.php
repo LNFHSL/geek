@@ -42,7 +42,7 @@ Route::post('user/uploadJoinPic','My@uploadJoinPic');
 // 获取导航
 Route::get('nav/getNavCate','Home\View@getNavCate');
 // 童星邀约
-Route::post('index/inviteBaby','Home\View@childInvite');
+Route::post('index/inviteBaby','Home\View@inviteBaby');
 // 获取轮播
 Route::get('Index/getSwriper','Home\View@getBanner');
  // 获取童星萌娃详情
