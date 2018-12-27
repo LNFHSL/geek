@@ -63,10 +63,18 @@ class View extends Controller{
  */
     // 获取已参加的萌娃
     public function getStarBaby(){
-       $alreadyJoinChild = DB::table('already_join_child')
-              ->where(['id'=>request('id'),'noticeid'=>request('noticeid')])
-              ->get();
-       return $alreadyJoinChild;
+       $juese_l = DB::table('notice_juese')->where(['notice_id'=>request('noticeid')])->get();
+       $rtn_a = [];
+       foreach ($juese_l as $key => $value) {
+              $trtn_a['starname']  = '角色名'.(++$key) ;
+              $trtn_a['babys'] = DB::table('notice_baoming')
+                     ->join("baby_info","notice_baoming.babyid","=","baby_info.uid")
+                     ->where(['nstarid'=>$value->id,'noticeid'=>request('noticeid')])
+                     ->get();
+              $rtn_a[]=$trtn_a;
+       }
+      
+       return $rtn_a;
     }
     // 获取公告列表
     public function getNoticeList(){
@@ -278,12 +286,35 @@ class View extends Controller{
         return $res;
     }
     // 报名
-    public function enroll(){
+    public function signUp(){
+       if (request('babyid')=='') {
+              return ['msg'=>'请先选择萌娃！'];
+       }else{
+              $c = DB::table("notice_baoming")->where(
+                            ['babyid'=>request('babyid'),'nstarid'=>request('nstarid')]
+                     )->count();
+              if ($c>0) {
+                     return ['msg'=>'你已经报过名了！'];exit();
+              }
+              $user=Auth::user();
+              $score = DB::table("notice_juese")
+              ->where(['notice_id'=>request('noticeid')])
+              ->where(['id'=>request('nstarid')])
+              ->value("score"); 
+              DB::table("notice_baoming")->insert(
+                     ['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode'),'uid'=> $user['id']]
+              );
 
-       DB::table("already_join_child")->insert(
-              ['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode')]
-       );
-       return ['intergal'=>10];
+              DB::table("notice_list")
+                     ->where(['id'=>request('noticeid')])
+                     ->increment("people");
+              // 赠送积分
+              DB::table("users")
+                     ->where(['id'=>$user['id']])
+                     ->increment("score",$score);      
+              return ['intergal'=>$score];
+       }
+       
     }
 
 

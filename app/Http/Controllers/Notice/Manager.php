@@ -67,6 +67,17 @@ class Manager extends Controller{
     
         return response()->json(['msg'=>'添加成功','code'=>200]);      
     }
+
+    //通告列表
+	public function lists(){ 
+		$uid=$this->user['id'];
+		$type=request('type');
+		$list=db::table('notice_baoming')
+			->join("notice_list","notice_baoming.noticeid","=","notice_list.id")
+			->join("notice_juese","notice_baoming.nstarid","=","notice_juese.id")
+			->where([['notice_baoming.uid',$uid],['notice_baoming.type',$type]])->get();
+		return $list;
+	}
    
 
 }

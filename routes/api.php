@@ -77,8 +77,6 @@ Route::get('notice/getHotNotice','Notice\View@geHotNotice');
  
 // 获取通告详情    
 Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
-//报名
-Route::post('notice/signUp','Notice\View@enroll');
 
 // 吴同学end
 
@@ -88,7 +86,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 	 
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
-	
+	//报名
+	Route::post('notice/signUp','Notice\View@signUp');
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 		return $index->$action();
 	});
