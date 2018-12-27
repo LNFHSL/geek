@@ -79,7 +79,7 @@ Route::get('notice/getHotNotice','Notice\View@geHotNotice');
 Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
 
 // 吴同学end
-
+Route::post('active/view','Active@view');
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
