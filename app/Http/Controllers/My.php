@@ -201,7 +201,7 @@ class My extends Controller{
 	public function delCollection()
 	{  
 		$res = DB::table("collection")
-			->where("sid",request('contentid'))
+			->where("contentid",request('contentid'))
 			->where("uid",$this->user['id'])
 			->delete();
         return ['res'=>$res];

@@ -37,11 +37,7 @@ class View extends Controller{
                   $getNoticeList['data']=DB::table('getnoticefiltercondition')->where($where)->get();
                   return $getNoticeList;
     		break;
-    		// 已参加的萌娃数据库获取
-    		case 'alreadyJoinChild':
-    			  $alreadyJoinChild = DB::table('alreadyjoinchild')->where($where)->get();
-                  echo $alreadyJoinChild;
-    		break;
+    		 
     		// 公告筛选地区数据库获取
     		case 'getNoticeFilterPlace':
     			  $getNoticeFilterPlace = DB::table('getnoticeFilterplace')->where($where)->get();
@@ -52,12 +48,7 @@ class View extends Controller{
     			  $geHotNotice = DB::table('notice_list')->get();
                   echo $geHotNotice;
     		break;
-    		  
-    		// 报名数据库获取
-    		case 'enroll':
-    			  $Enroll = DB::table('enroll')->where($where)->get(['code','msg','intergal']);
-                  echo $Enroll;
-    		break;
+    		   
     		// 获取公告筛选条件
     		case 'getNoticeFilterCondition':
     			  $getNoticeFilterCondition = DB::table('notice_list')->where($where)->get(['id','placeTop','title','talk_pay','film','place','people','endtime','time']);
@@ -71,8 +62,11 @@ class View extends Controller{
  * 公告类各接口函数
  */
     // 获取已参加的萌娃
-    public function alreadyJoinChild(){
-    	$this->SQLSelect('alreadyJoinChild',['id'=>request('id'),'noticeid'=>request('noticeid')]);
+    public function getStarBaby(){
+       $alreadyJoinChild = DB::table('already_join_child')
+              ->where(['id'=>request('id'),'noticeid'=>request('noticeid')])
+              ->get();
+       return $alreadyJoinChild;
     }
     // 获取公告列表
     public function getNoticeList(){
@@ -258,17 +252,38 @@ class View extends Controller{
        $getNoticeDetail->babys = [];
        $getNoticeDetail->isPart = false;
        $getNoticeDetail->isCollection = false;
+       
+       $user = Auth::user();
+        
+       if ($user) {  
+              $c = DB::table("collection")
+              ->where("contentid",request('id'))
+              ->where("uid",$user['id'])
+              ->count();
+              if ($c>0) {
+                     $getNoticeDetail->isCollection = true;
+              }
+       }
       
        echo json_encode($getNoticeDetail);
     }
     // 获取报名时童星角色的价格类型
     public function getStarsForSignUp(){
+      
+       $res = DB::table("notice_juese")
+              ->join("notice_list","notice_juese.notice_id","=","notice_list.id")
+              ->where("notice_id",request('noticeid'))
+              ->get(["title","talk_pay as equalpay","price"]);
           
-        return [];
+        return $res;
     }
     // 报名
     public function enroll(){
-    	$this->SQLSelect('enroll',['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode')]);
+
+       DB::table("already_join_child")->insert(
+              ['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode')]
+       );
+       return ['intergal'=>10];
     }
 
 

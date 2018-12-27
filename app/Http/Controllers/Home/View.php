@@ -59,16 +59,7 @@ class View extends Controller
                  $getBanner = DB::table('banner')->get();
                  echo $getBanner;
             break;
-            // 获取其它童星推荐
-            case 'getOhterRecommendChild':
-
-                 $list['data'] = DB::table('baby_info')->get();
-                 $list['data1'] = DB::table('baby_info')->get();
-                 $list['data2'] = DB::table('baby_info')->get();
-                 $list['data3']= DB::table('baby_info')->get();
-              
-                 echo json_encode($list);
-            break;
+            
              
             
          }
@@ -204,8 +195,13 @@ class View extends Controller
      }
  // 获取其他推荐童星
      function getOhterRecommendChild(){
-        $this->SQLSelect('getOhterRecommendChild',null);
-          
+       
+          $list['data'] = DB::table('baby_info')->get();
+          $list['data1'] = DB::table('baby_info')->get();
+          $list['data2'] = DB::table('baby_info')->get();
+          $list['data3']= DB::table('baby_info')->get();
+       
+          return $list;
          
      }
 // 获取推荐童星  

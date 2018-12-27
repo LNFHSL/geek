@@ -63,7 +63,7 @@ Route::post('home/getCateChild','Home\View@getCateChild');
  * 公告类接口
  */
 // 获取已参加的萌娃
-Route::get('notice/getStarBaby','Notice\View@alreadyJoinChild');
+Route::post('notice/getStarBaby','Notice\View@getStarBaby');
 // 获取公告列表
 Route::post('notice/getNotice','Notice\View@getNoticeList');
 // 获取公告筛选地区
@@ -77,8 +77,6 @@ Route::get('notice/getHotNotice','Notice\View@geHotNotice');
  
 // 获取通告详情    
 Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
-// 获取报名时童星角色的价格类型
-Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 //报名
 Route::post('notice/signUp','Notice\View@enroll');
 
@@ -88,6 +86,8 @@ Route::post('notice/signUp','Notice\View@enroll');
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	 
+	// 获取报名时童星角色的价格类型
+	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 		return $index->$action();
@@ -106,5 +106,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('active/{action}', function(App\Http\Controllers\Active $index, $action){
 		return $index->$action();
 	});
+
+	
 	
 });
