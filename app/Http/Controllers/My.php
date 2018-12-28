@@ -206,5 +206,31 @@ class My extends Controller{
 			->delete();
         return ['res'=>$res];
 	}
+
+	// 修改头像
+	public function changeUinfo()
+	{
+		$w_str = [];
+		if(request('imgurl')){
+			$w_str['image'] = request('imgurl');
+		}
+		if(request('username')){
+			$w_str['username'] = request('username');
+		}
+		
+		if(request('password')){
+			$w_str['password'] =  bcrypt(request('password'));
+		}
+		$res = DB::table("users")
+			->where("id",$this->user['id'])
+			->update($w_str);
+	}
+	public function getUserInfo()
+	{
+		$res = DB::table("users")
+			->where("id",$this->user['id'])
+			->first(["image as userpic","username"]);
+		echo json_encode($res);
+	}
  }
 ?>

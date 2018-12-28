@@ -254,6 +254,7 @@ class View extends Controller{
                      $value->height = $value->heightStar.'-'.$value->heightEnd.'cm';
               }
               $value->equalpay =  $getNoticeDetail->talk_pay;
+              $value->type =  $getNoticeDetail->type;
               $getNoticeDetail->job[]=$value;
        }
 

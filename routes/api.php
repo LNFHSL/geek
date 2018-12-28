@@ -30,6 +30,7 @@ Route::any('user/juhecurl','Users@juhecurl');
 
 Route::post('baby/uploadheadpic', 'Baby@uploadheadpic');  //头像	
 Route::post('baby/uploadimage', 'Baby@uploadimage'); //没头像	
+Route::post('baby/getCardModel', 'Baby@getCardModel');  
 
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');
@@ -105,6 +106,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('active/{action}', function(App\Http\Controllers\Active $index, $action){
 		return $index->$action();
 	});
+
+
 
 	
 	

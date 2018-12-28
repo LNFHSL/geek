@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,4 +14,11 @@
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(['middleware' => 'auth:api'], function(){
+
+	//支付
+	Route::post('fenda/public/api/weixin/pay','Weixin@pay');
+	
 });
