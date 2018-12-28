@@ -127,16 +127,18 @@ class View extends Controller
                $info->awardexp = DB::table('baby_experience')->where("type",'award')->where("babyid",$info->uid)->value('content');
 
                
-               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->id)->get(['id','file as url']);
+               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->uid)->get(['id','file as url']);
                
-               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->id)->get(['id','file as url']);
+               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->uid)->get(['id','file as url']);
                
-               $info->dramas = DB::table('baby_uploadimage')->where("type",'drama')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->cardmodes = DB::table('baby_uploadimage')->where("type",'cardmode')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->lifes = DB::table('baby_uploadimage')->where("type",'life')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->shot = DB::table('baby_uploadimage')->where("type",'shot')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->show = DB::table('baby_uploadimage')->where("type",'show')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->award = DB::table('baby_uploadimage')->where("type",'award')->where("babyid",$info->id)->get(['id','file as url']);
+               $info->dramas = DB::table('baby_uploadimage')->where("type",'drama')->where("babyid",$info->uid)->get(['id','file as url']);
+
+               $info->cardmodes = DB::table('baby_uploadimage')->where("type",'cardmod')->where("babyid",$info->uid)->get(['id','file as url','cardmode']);
+               
+               $info->lifes = DB::table('baby_uploadimage')->where("type",'life')->where("babyid",$info->uid)->get(['id','file as url']);
+               $info->shot = DB::table('baby_uploadimage')->where("type",'shot')->where("babyid",$info->uid)->get(['id','file as url']);
+               $info->show = DB::table('baby_uploadimage')->where("type",'show')->where("babyid",$info->uid)->get(['id','file as url']);
+               $info->award = DB::table('baby_uploadimage')->where("type",'award')->where("babyid",$info->uid)->get(['id','file as url']);
                $info->isCollection = 0;
                 
                return  response()->json($info);
