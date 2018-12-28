@@ -61,10 +61,6 @@ Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
 Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 // 获取分类详情
 Route::post('home/getCateChild','Home\View@getCateChild');
-<<<<<<< HEAD
-
-=======
->>>>>>> 990c48c526688227acba9f86b77eb156b691d5f0
 
 /**
  * 公告类接口
@@ -99,10 +95,6 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
-<<<<<<< HEAD
-=======
-	
->>>>>>> 990c48c526688227acba9f86b77eb156b691d5f0
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 	return $index->$action();
 	});
