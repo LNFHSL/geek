@@ -13,7 +13,7 @@ class Shop extends Controller{
 	    function __CONSTRUCT(){
 	        $this->user = Auth::user();
 	    }
-		
+		 //我的积分在my文件里
 		public function getGoods(){  //全部商品
 		     $user=Auth::user();
 		    $list_score=db::table('users')->where('id',$user['id'])->value('score');
@@ -28,6 +28,6 @@ class Shop extends Controller{
 	    	$list=db::table('goods')->where('id',$id)->first();
 			 return json_encode($list);
 	    }
-		
+
 }
 ?>

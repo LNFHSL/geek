@@ -39,9 +39,6 @@ Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_ht $index, $a
 	return $index->$action();
 	});
 
-
-Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
-
 // 吴同学start
 /**
  * 首页界面接口
@@ -64,7 +61,10 @@ Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
 Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 // 获取分类详情
 Route::post('home/getCateChild','Home\View@getCateChild');
+<<<<<<< HEAD
 
+=======
+>>>>>>> 990c48c526688227acba9f86b77eb156b691d5f0
 
 /**
  * 公告类接口
@@ -84,33 +84,37 @@ Route::get('notice/getHotNotice','Notice\View@geHotNotice');
  
 // 获取通告详情    
 Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
-
 // 吴同学end
 Route::post('active/view','Active@view');
+
+Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
+
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
 	
 	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
-
-
-	 
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 990c48c526688227acba9f86b77eb156b691d5f0
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
-		return $index->$action();
+	return $index->$action();
 	});
 	
 	Route::post('notice/{action}', function(App\Http\Controllers\Notice $index, $action){
-		return $index->$action();
+	return $index->$action();
 	});
 	
 	Route::post('baby/{action}', function(App\Http\Controllers\Baby $index, $action){
-		return $index->$action();
+	return $index->$action();
 	});
+	
 	Route::post('manager_notice/{action}', function(App\Http\Controllers\Notice\Manager $index, $action){
 		return $index->$action();
 	});
@@ -121,8 +125,4 @@ Route::group(['middleware' => 'auth:api'], function(){
 		return $index->$action();
 	});
 
-
-
-	
-	
 });
