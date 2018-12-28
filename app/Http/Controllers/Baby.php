@@ -182,7 +182,7 @@ class Baby extends Controller
         $id = DB::table("baby_info")->insert($input);
 
 
-        DB::table("baby_card")->update([
+        DB::table("baby_card")->insert([
             'id' => $input['uid'],
             'name' => request('name')
         ]);
@@ -199,7 +199,7 @@ class Baby extends Controller
         unset($input['token']);
         unset($input['id']);
 
-        $id = DB::table("baby_info")->where("id", $id)->update($input);
+        $id = DB::table("baby_info")->where("uid", $id)->update($input);
     }
 
     // 我的卡模

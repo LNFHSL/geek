@@ -95,6 +95,8 @@ class Manager extends Controller{
      
         $juese_list =  $input['juese_list'];
         unset($input['juese_list']);
+        unset($input['id']);
+
         DB::table("notice_list")->where("id",$id)->update($input);
 
 
@@ -114,6 +116,7 @@ class Manager extends Controller{
               unset($value['heigh']);
               $people += $value['people'] ;
               if (isset($value['id'])) {
+                 unset($value['id']);
                 DB::table("notice_juese")->update($value);
               }else{
                 DB::table("notice_juese")->insert($value);
