@@ -184,7 +184,28 @@ class My extends Controller{
 		return $list;
 		
 	}
-	
+
+	// 添加收藏
+	// notice为通告，baby为童星,activity为活动，product为产品,传值为英文
+	public function addCollection()
+	{  
+		$input = request()->all();
+		$input['add_time'] = time();
+		$input['uid'] = $this->user['id'];
+		unset($input['token']);
+        $id = DB::table("collection")->insertGetId($input);
+        return ['id'=>$id];
+	}
+
+	// 删除收藏
+	public function delCollection()
+	{  
+		$res = DB::table("collection")
+			->where("contentid",request('contentid'))
+			->where("uid",$this->user['id'])
+			->delete();
+        return ['res'=>$res];
+	}
 
  }
 ?>

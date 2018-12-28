@@ -102,6 +102,12 @@ class Baby extends Controller
 
         return ['code'=>$info];
     }
+    public function delimage()
+    {
+        
+
+        return ['code'=>66];
+    }
     public function addVideo()
     {
         $input = request()->all();
