@@ -30,10 +30,14 @@ Route::any('user/juhecurl','Users@juhecurl');
 
 Route::post('baby/uploadheadpic', 'Baby@uploadheadpic');  //头像	
 Route::post('baby/uploadimage', 'Baby@uploadimage'); //没头像	
+Route::post('baby/getCardModel', 'Baby@getCardModel');  
 
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');
 
+Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_ht $index, $action){
+	return $index->$action();
+	});
 
 // 吴同学start
 /**
@@ -42,7 +46,7 @@ Route::post('user/uploadJoinPic','My@uploadJoinPic');
 // 获取导航
 Route::get('nav/getNavCate','Home\View@getNavCate');
 // 童星邀约
-Route::post('index/inviteBaby','Home\View@childInvite');
+Route::post('index/inviteBaby','Home\View@inviteBaby');
 // 获取轮播
 Route::get('Index/getSwriper','Home\View@getBanner');
  // 获取童星萌娃详情
@@ -58,12 +62,11 @@ Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 // 获取分类详情
 Route::post('home/getCateChild','Home\View@getCateChild');
 
-
 /**
  * 公告类接口
  */
 // 获取已参加的萌娃
-Route::get('notice/getStarBaby','Notice\View@alreadyJoinChild');
+Route::post('notice/getStarBaby','Notice\View@getStarBaby');
 // 获取公告列表
 Route::post('notice/getNotice','Notice\View@getNoticeList');
 // 获取公告筛选地区
@@ -77,34 +80,41 @@ Route::get('notice/getHotNotice','Notice\View@geHotNotice');
  
 // 获取通告详情    
 Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
-// 获取报名时童星角色的价格类型
-Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
-//报名
-Route::post('notice/signUp','Notice\View@enroll');
-
 // 吴同学end
+Route::post('active/view','Active@view');
+
+Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
 
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
-	 
 	
+	
+	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
+	// 获取报名时童星角色的价格类型
+	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
+	//报名
+	Route::post('notice/signUp','Notice\View@signUp');
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
-		return $index->$action();
+	return $index->$action();
 	});
 	
 	Route::post('notice/{action}', function(App\Http\Controllers\Notice $index, $action){
-		return $index->$action();
+	return $index->$action();
 	});
 	
 	Route::post('baby/{action}', function(App\Http\Controllers\Baby $index, $action){
-		return $index->$action();
+	return $index->$action();
 	});
+	
 	Route::post('manager_notice/{action}', function(App\Http\Controllers\Notice\Manager $index, $action){
 		return $index->$action();
 	});
 	Route::post('active/{action}', function(App\Http\Controllers\Active $index, $action){
 		return $index->$action();
 	});
-	
+	Route::post('weixin/{action}', function(App\Http\Controllers\Weixin $index, $action){
+		return $index->$action();
+	});
+
 });

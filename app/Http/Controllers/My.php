@@ -107,7 +107,7 @@ class My extends Controller{
 	 
 	 
 	
-	 public function uploadJoinPic(Request $request){   //上传加盟图片
+	 public function uploadJoinPic(Request $request){   //上传图片  通用
 	    
            $file = $request->file('file');
         // 文件是否上传成功
@@ -201,10 +201,35 @@ class My extends Controller{
 	public function delCollection()
 	{  
 		$res = DB::table("collection")
-			->where("sid",request('contentid'))
+			->where("contentid",request('contentid'))
 			->where("uid",$this->user['id'])
 			->delete();
         return ['res'=>$res];
+	}
+
+	// 修改头像
+	public function changeUinfo()
+	{
+		$w_str = [];
+		if(request('imgurl')){
+			$w_str['image'] = request('imgurl');
+		}
+		if(request('username')){
+			$w_str['username'] = request('username');
+		}
+		
+		if(request('password')){
+			$w_str['password'] =  bcrypt(request('password'));
+		}
+		$res = DB::table("users")
+			->where("id",$this->user['id'])
+			->update($w_str);
+	}
+	public function getUserInfo()
+	{
+		$res = DB::table("users")->where("id",$this->user['id'])
+		->first(["image as userpic","username","score as scroll"]);
+		echo json_encode($res);
 	}
  }
 ?>

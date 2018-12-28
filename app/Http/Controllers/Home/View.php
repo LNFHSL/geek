@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Home;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
  
 class View extends Controller
@@ -18,13 +18,7 @@ class View extends Controller
 // 数据库插入
      function SQLInsert($who){
       // 童星邀约
-         switch ($who){
-            case 'childInvite':
-                DB::table('childinvite')->insert(
-                        ['contacter' => request('contacter'),'method' => request('method'),'babyid' => request('babyid')]
-                 );
-            break;
-         }
+       
        
      }
 // 数据库更新
@@ -59,16 +53,7 @@ class View extends Controller
                  $getBanner = DB::table('banner')->get();
                  echo $getBanner;
             break;
-            // 获取其它童星推荐
-            case 'getOhterRecommendChild':
-
-                 $list['data'] = DB::table('baby_info')->get();
-                 $list['data1'] = DB::table('baby_info')->get();
-                 $list['data2'] = DB::table('baby_info')->get();
-                 $list['data3']= DB::table('baby_info')->get();
-              
-                 echo json_encode($list);
-            break;
+            
              
             
          }
@@ -107,12 +92,19 @@ class View extends Controller
        
      }
 // 童星邀约  
-     function childInvite(){
+     function inviteBaby(){
         if(request('contacter')&&request('method')&&request('babyid')){
-          $this->SQLInsert('childInvite',null);
-          echo '邀约成功';
+          DB::table('baby_invite')->insert(
+               [
+                    'contacter' => request('contacter'),
+                    'method' => request('method'),
+                    'babyid' => request('babyid'),
+                    'invite_time' => time(),
+               ]
+        );
+          return '邀约成功';
         }else{
-          echo '邀约失败';
+          return '邀约失败';
         }
      }
 // 获取轮播   
@@ -135,16 +127,18 @@ class View extends Controller
                $info->awardexp = DB::table('baby_experience')->where("type",'award')->where("babyid",$info->uid)->value('content');
 
                
-               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->id)->get(['id','file as url']);
+               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->uid)->get(['id','file as url']);
                
-               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->id)->get(['id','file as url']);
+               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->uid)->get(['id','file as url']);
                
-               $info->dramas = DB::table('baby_uploadimage')->where("type",'drama')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->cardmodes = DB::table('baby_uploadimage')->where("type",'cardmode')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->lifes = DB::table('baby_uploadimage')->where("type",'life')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->shot = DB::table('baby_uploadimage')->where("type",'shot')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->show = DB::table('baby_uploadimage')->where("type",'show')->where("babyid",$info->id)->get(['id','file as url']);
-               $info->award = DB::table('baby_uploadimage')->where("type",'award')->where("babyid",$info->id)->get(['id','file as url']);
+               $info->dramas = DB::table('baby_uploadimage')->where("type",'drama')->where("babyid",$info->uid)->get(['id','file as url']);
+
+               $info->cardmodes = DB::table('baby_uploadimage')->where("type",'cardmod')->where("babyid",$info->uid)->get(['id','file as url','cardmode']);
+               
+               $info->lifes = DB::table('baby_uploadimage')->where("type",'life')->where("babyid",$info->uid)->get(['id','file as url']);
+               $info->shot = DB::table('baby_uploadimage')->where("type",'shot')->where("babyid",$info->uid)->get(['id','file as url']);
+               $info->show = DB::table('baby_uploadimage')->where("type",'show')->where("babyid",$info->uid)->get(['id','file as url']);
+               $info->award = DB::table('baby_uploadimage')->where("type",'award')->where("babyid",$info->uid)->get(['id','file as url']);
                $info->isCollection = 0;
                 
                return  response()->json($info);
@@ -204,8 +198,13 @@ class View extends Controller
      }
  // 获取其他推荐童星
      function getOhterRecommendChild(){
-        $this->SQLSelect('getOhterRecommendChild',null);
-          
+       
+          $list['data'] = DB::table('baby_info')->get();
+          $list['data1'] = DB::table('baby_info')->get();
+          $list['data2'] = DB::table('baby_info')->get();
+          $list['data3']= DB::table('baby_info')->get();
+       
+          return $list;
          
      }
 // 获取推荐童星  

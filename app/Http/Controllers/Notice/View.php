@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Notice;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -37,11 +37,7 @@ class View extends Controller{
                   $getNoticeList['data']=DB::table('getnoticefiltercondition')->where($where)->get();
                   return $getNoticeList;
     		break;
-    		// 已参加的萌娃数据库获取
-    		case 'alreadyJoinChild':
-    			  $alreadyJoinChild = DB::table('alreadyjoinchild')->where($where)->get();
-                  echo $alreadyJoinChild;
-    		break;
+    		 
     		// 公告筛选地区数据库获取
     		case 'getNoticeFilterPlace':
     			  $getNoticeFilterPlace = DB::table('getnoticeFilterplace')->where($where)->get();
@@ -52,12 +48,7 @@ class View extends Controller{
     			  $geHotNotice = DB::table('notice_list')->get();
                   echo $geHotNotice;
     		break;
-    		  
-    		// 报名数据库获取
-    		case 'enroll':
-    			  $Enroll = DB::table('enroll')->where($where)->get(['code','msg','intergal']);
-                  echo $Enroll;
-    		break;
+    		   
     		// 获取公告筛选条件
     		case 'getNoticeFilterCondition':
     			  $getNoticeFilterCondition = DB::table('notice_list')->where($where)->get(['id','placeTop','title','talk_pay','film','place','people','endtime','time']);
@@ -71,8 +62,19 @@ class View extends Controller{
  * 公告类各接口函数
  */
     // 获取已参加的萌娃
-    public function alreadyJoinChild(){
-    	$this->SQLSelect('alreadyJoinChild',['id'=>request('id'),'noticeid'=>request('noticeid')]);
+    public function getStarBaby(){
+       $juese_l = DB::table('notice_juese')->where(['notice_id'=>request('noticeid')])->get();
+       $rtn_a = [];
+       foreach ($juese_l as $key => $value) {
+              $trtn_a['starname']  = '角色名'.(++$key) ;
+              $trtn_a['babys'] = DB::table('notice_baoming')
+                     ->join("baby_info","notice_baoming.babyid","=","baby_info.uid")
+                     ->where(['nstarid'=>$value->id,'noticeid'=>request('noticeid')])
+                     ->get();
+              $rtn_a[]=$trtn_a;
+       }
+      
+       return $rtn_a;
     }
     // 获取公告列表
     public function getNoticeList(){
@@ -231,7 +233,7 @@ class View extends Controller{
     }
     // 获取热门公告
     public function geHotNotice(){
-        $geHotNotice = DB::table('notice_list')->get();
+        $geHotNotice = DB::table('notice_list')->orderBy("id","desc")->get();
         return $geHotNotice;
     }
     // 获取通告详情
@@ -252,23 +254,68 @@ class View extends Controller{
                      $value->height = $value->heightStar.'-'.$value->heightEnd.'cm';
               }
               $value->equalpay =  $getNoticeDetail->talk_pay;
+              $value->type =  $getNoticeDetail->type;
               $getNoticeDetail->job[]=$value;
        }
 
        $getNoticeDetail->babys = [];
        $getNoticeDetail->isPart = false;
        $getNoticeDetail->isCollection = false;
+       
+       $user = Auth::user();
+        
+       if ($user) {  
+              $c = DB::table("collection")
+              ->where("contentid",request('id'))
+              ->where("uid",$user['id'])
+              ->count();
+              if ($c>0) {
+                     $getNoticeDetail->isCollection = true;
+              }
+       }
       
        echo json_encode($getNoticeDetail);
     }
     // 获取报名时童星角色的价格类型
     public function getStarsForSignUp(){
+      
+       $res = DB::table("notice_juese")
+              ->join("notice_list","notice_juese.notice_id","=","notice_list.id")
+              ->where("notice_id",request('noticeid'))
+              ->get(["title","talk_pay as equalpay","price"]);
           
-        return [];
+        return $res;
     }
     // 报名
-    public function enroll(){
-    	$this->SQLSelect('enroll',['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode')]);
+    public function signUp(){
+       if (request('babyid')=='') {
+              return ['msg'=>'请先选择萌娃！'];
+       }else{
+              $c = DB::table("notice_baoming")->where(
+                            ['babyid'=>request('babyid'),'nstarid'=>request('nstarid')]
+                     )->count();
+              if ($c>0) {
+                     return ['msg'=>'你已经报过名了！'];exit();
+              }
+              $user=Auth::user();
+              $score = DB::table("notice_juese")
+              ->where(['notice_id'=>request('noticeid')])
+              ->where(['id'=>request('nstarid')])
+              ->value("score"); 
+              DB::table("notice_baoming")->insert(
+                     ['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode'),'uid'=> $user['id']]
+              );
+
+              DB::table("notice_list")
+                     ->where(['id'=>request('noticeid')])
+                     ->increment("people");
+              // 赠送积分
+              DB::table("users")
+                     ->where(['id'=>$user['id']])
+                     ->increment("score",$score);      
+              return ['intergal'=>$score];
+       }
+       
     }
 
 

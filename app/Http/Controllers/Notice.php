@@ -17,8 +17,10 @@ class Notice extends Controller{
 	public function getpartnotice(){ //我参加的通告
 		$uid=$this->user['id'];
 		$type=request('type');
-		$list=db::table('partnotice')->where([['uid',$uid],['type',$type]])->get();
-		db::table('partnotice')->where([['uid',$uid],['type',$type]])->update(["tips"=>'1']);
+		$list=db::table('notice_baoming')
+			->join("notice_list","notice_baoming.noticeid","=","notice_list.id")
+			->join("notice_juese","notice_baoming.nstarid","=","notice_juese.id")
+			->where([['notice_baoming.uid',$uid],['notice_baoming.type',$type]])->get();
 		return $list;
 	}
 	
