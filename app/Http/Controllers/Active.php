@@ -34,5 +34,15 @@ class Active extends Controller
     
         return response()->json(['msg'=>'添加成功','code'=>200]);      
     }
-    
+    // 获取活动列表
+    public function getActiveList(){
+        $activeArr=DB::table("active_list")->where('time','>','0')->select('id','thumb','title','money','place','time')->get();
+        return $activeArr;
+    }
+    //获取活动详情
+    public function show(){
+        $id=request("id");
+        $activeObj=DB::table("active_list")->where('id',$id)->get();
+        return $activeObj;
+    }
 }
