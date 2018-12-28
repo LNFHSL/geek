@@ -23,7 +23,7 @@ class Users extends Controller{
         }
     }
 	  
-	//注册 待完善
+	//注册 
 	 public function register(Request $request)
     {
     	$ValidCode=request('ValidCode');

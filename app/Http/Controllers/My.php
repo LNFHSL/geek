@@ -107,7 +107,7 @@ class My extends Controller{
 	 
 	 
 	
-	 public function uploadJoinPic(Request $request){   //上传加盟图片
+	 public function uploadJoinPic(Request $request){   //上传图片  通用
 	    
            $file = $request->file('file');
         // 文件是否上传成功
