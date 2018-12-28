@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Home;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
  
 class View extends Controller

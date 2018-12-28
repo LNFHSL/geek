@@ -64,7 +64,6 @@ Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
 Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 // 获取分类详情
 Route::post('home/getCateChild','Home\View@getCateChild');
->>>>>>> f63ae1a1c946b398b2f2176aaf5f3882b04b70bc
 
 
 /**
@@ -101,7 +100,6 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
->>>>>>> f63ae1a1c946b398b2f2176aaf5f3882b04b70bc
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 		return $index->$action();
 	});
@@ -117,6 +115,9 @@ Route::group(['middleware' => 'auth:api'], function(){
 		return $index->$action();
 	});
 	Route::post('active/{action}', function(App\Http\Controllers\Active $index, $action){
+		return $index->$action();
+	});
+	Route::post('weixin/{action}', function(App\Http\Controllers\Weixin $index, $action){
 		return $index->$action();
 	});
 

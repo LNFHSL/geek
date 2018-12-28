@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use App\User;
 use Validator;
 use Illuminate\Support\Facades\Auth;

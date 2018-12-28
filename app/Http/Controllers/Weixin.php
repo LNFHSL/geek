@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use App\User;
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -51,25 +51,66 @@ class Weixin extends Controller
 	}
     // 支付
     public function pay(){
-        $id = request('order_id');//传入订单ID
-        $order_find = ExampleOrder::find($id); //找到该订单
+
+        return;
+        $app = EasyWeChat::officialAccount(); // 公众号
+      
+        $oauth = $app->oauth;
+
+        // 未登录
+        if (empty($_SESSION['wechat_user'])) {
+
+        $_SESSION['target_url'] = 'user/profile';
+
+        return $oauth->redirect();
+        // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
+        // $oauth->redirect()->send();
+        }
+
+
+
+    // 已经登录过
+    $user = $_SESSION['wechat_user'];
+
+        // $user = Auth::user();
+        $id = $user['id'];//用户id
+        $price = request('price');
+        $type = request('type');
+        $detail = '';
+        if ( $type == 'price') {
+            $detail = '购买会员';
+        }
         $mch_id = '1502049251';//你的MCH_ID
             $options = $this->options();
-            $app = new Application($options);
-            $payment = $app->payment;
-            $out_trade_no = $mch_id.date("YmdHis"); //拼一下订单号
-            $attributes = [
-                'trade_type'       => 'APP', // JSAPI，NATIVE，APP...
-                'body'             => '购买CSDN产品',
-                'detail'           => $order_find->info, //我这里是通过订单找到商品详情，你也可以自定义
-                'out_trade_no'     => $out_trade_no,
-                'total_fee'        => $order_find->money*100, //因为是以分为单位，所以订单里面的金额乘以100
-                // 'notify_url'       => 'http://xxx.com/order-notify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
-                // 'openid'           => '当前用户的 openid', // trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识，
-                // ...
-            ];
-            $order = new Order($attributes);
-            $result = $payment->prepare($order);
+            
+  $payment = EasyWeChat::payment(); // 微信支付
+
+  $result = $payment->order->unify([
+    'body' => '腾讯充值中心-QQ会员充值',
+    'out_trade_no' => '20150806125346',
+    'total_fee' => 88,
+    'spbill_create_ip' => '123.12.12.123', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
+    'notify_url' => 'https://pay.weixin.qq.com/wxpay/pay.action', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+    'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
+    'openid' => 'oUpF8uMuAJO_M2pxb1Q9zNjWeS6o',
+]);
+
+
+            // $app = new Application($options);
+            // $payment = $app->payment;
+            // $out_trade_no = $mch_id.date("YmdHis"); //拼一下订单号
+            // $attributes = [
+            //     'trade_type'       => 'APP', // JSAPI，NATIVE，APP...
+            //     'body'             => '购买CSDN产品',
+            //     'detail'           => $detail, //我这里是通过订单找到商品详情，你也可以自定义
+            //     'out_trade_no'     => $out_trade_no,
+            //     'total_fee'        => $price*100, //因为是以分为单位，所以订单里面的金额乘以100
+            //     // 'notify_url'       => 'http://xxx.com/order-notify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+            //     // 'openid'           => '当前用户的 openid', // trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识，
+            //     // ...
+            // ];
+            // $order = new Order($attributes);
+            // $result = $payment->prepare($order);
         if ($result->return_code == 'SUCCESS' && $result->result_code == 'SUCCESS'){
             $order_find->out_trade_no = $out_trade_no; //在这里更新订单的支付ID
             $order_find->save();
