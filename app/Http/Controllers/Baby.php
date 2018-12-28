@@ -45,8 +45,8 @@ class Baby extends Controller
 
     public function getBabyCard()
     {
-       $info = DB::table('baby_card')->where("id",$this->user['id'])->get();
-
+       $info = DB::table('baby_card')->where("uid",$this->user['id'])->get();
+	   if($info->count()){
        $videos = DB::table('baby_video')->select("id","url","createtime")->where("babyid", $this->user['id'])->count();
        $shotexp = DB::table('baby_experience')->where("type",'shot')->where("babyid", $this->user['id'])->value('content');
        $showexp = DB::table('baby_experience')->where("type",'show')->where("babyid", $this->user['id'])->value('content');
@@ -67,6 +67,9 @@ class Baby extends Controller
        $info[0]->rate = $rate.'%';
 
        return response()->json( $info);
+	    }else{
+	   	 return (['code'=>'-1','msg'=>'没有找到萌娃的信息']);;
+	   }
     }
 
     public function  getbabyinfo()

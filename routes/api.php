@@ -34,19 +34,19 @@ Route::post('baby/uploadimage', 'Baby@uploadimage'); //没头像
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');
 
+Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_ht $index, $action){
+	return $index->$action();
+	});
 
+Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
 
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
-	//收货地址
-//	Route::post('user/addMyAddress', 'My@addMyAddress');  //添加地址
-//	Route::post('user/delMyAddress', 'My@delMyAddress');  //删除地址
-//	Route::post('user/editMyAddress', 'My@editMyAddress');//修改地址
-//	Route::post('user/editMyAddressdz', 'My@editMyAddressdz');//修改默认地址
-//	Route::post('user/getMyAddress', 'My@getMyAddress');  //查询地址
 	
+	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
+
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 	return $index->$action();
 	});
