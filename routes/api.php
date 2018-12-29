@@ -35,10 +35,14 @@ Route::post('baby/getCardModel', 'Baby@getCardModel');
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');
 
-Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_ht $index, $action){
+//后台管理系统 商品
+Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
 	return $index->$action();
 	});
-
+//后台管理系统 审核加盟	
+    Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
+	    return $index->$action();
+	});
 // 吴同学start
 /**
  * 首页界面接口
@@ -84,7 +88,7 @@ Route::post('notice/getNoticeInfo','Notice\View@getNoticeInfo');
 Route::post('active/view','Active@view');
 
 Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
-
+Route::post('shop/getFilterGoods','Shop@getFilterGoods'); //商品详情
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
@@ -114,5 +118,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('active/{action}', function(App\Http\Controllers\Active $index, $action){
 		return $index->$action();
 	});
+	
+	
 
 });

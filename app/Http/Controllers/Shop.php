@@ -19,7 +19,9 @@ class Shop extends Controller{
 		    $list_score=db::table('users')->where('id',$user['id'])->value('score');
 			$list_shopMyGoods=db::table('goods')->where('integral', '<=',$list_score)->get();
 			$list_shopAllGood=db::table('goods')->select('id','name','classify','integral','image')->get();
-			return (['shopMyGoods'=>$list_shopMyGoods,'shopAllGood'=>$list_shopAllGood]);
+			$list_classify=db::table('goods_classify')->get();
+			
+			return (['shopMyGoods'=>$list_shopMyGoods,'shopAllGood'=>$list_shopAllGood,'shopDrop'=>$list_classify]);
 			
 		}
 	
@@ -28,6 +30,14 @@ class Shop extends Controller{
 	    	$list=db::table('goods')->where('id',$id)->first();
 			 return json_encode($list);
 	    }
+		public function getFilterGoods(){
+			$input=request()->all();
+			print_r($input['type']);exit();
+			
+			
+			$list=db::table('goods')->where($input)->get();
+			return $list;
+		}
 
 }
 ?>

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Support\Facades\Storage;
 
-class Geek_ht extends Controller{
+class Geek_goods extends Controller{
 	public function classify(){   //获取商品分类
 		$list=db::table('goods_classify')->get();
 		return $list;
