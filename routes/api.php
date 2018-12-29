@@ -99,7 +99,6 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
-	
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 	return $index->$action();
 	});
@@ -119,6 +118,9 @@ Route::group(['middleware' => 'auth:api'], function(){
 		return $index->$action();
 	});
 	
-	
+	Route::post('weixin/{action}', function(App\Http\Controllers\Weixin $index, $action){
+		return $index->$action();
+	});
+
 
 });

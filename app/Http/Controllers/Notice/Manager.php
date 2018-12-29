@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Notice;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -95,6 +95,8 @@ class Manager extends Controller{
      
         $juese_list =  $input['juese_list'];
         unset($input['juese_list']);
+        unset($input['id']);
+
         DB::table("notice_list")->where("id",$id)->update($input);
 
 
@@ -114,6 +116,7 @@ class Manager extends Controller{
               unset($value['heigh']);
               $people += $value['people'] ;
               if (isset($value['id'])) {
+                 unset($value['id']);
                 DB::table("notice_juese")->update($value);
               }else{
                 DB::table("notice_juese")->insert($value);
