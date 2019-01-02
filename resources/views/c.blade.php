@@ -63,17 +63,7 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
- 
+           
             <div class="content">
                 <div class="title m-b-md">
                     Laravel
@@ -84,24 +74,18 @@
                     <a href="https://laracasts.com">Laracasts</a>
                     <a href="https://laravel-news.com">News</a>
                     <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="https://github.com/laravel/laravel">GitHubsssss</a>
                 </div>
             </div>
         </div>
         <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 
         <script>
-             $.post("http://localhost/laravel55/public/api/login",{
+             $.get("/geeks/public/index.php/api/weixin/getopenid",{
                 email:'332@qq.com',
                 password:'12345',
             },function (rtn) {
-                $.ajax({
-                    url:"http://localhost/laravel55/public/api/info",
-                    type:"post",
-                    dataType: 'json',
-                    headers: {'Authorization': 'Bearer '+rtn.success.token} ,
-                   
-                })
+               console.log(rtn)
             })
            
         </script>

@@ -61,8 +61,8 @@ return [
         'default' => [
             'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID', 'wx0665fb4e5cb01453'),         // AppID
             'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET', '92260d5c2656a8ff98bb1fe906fcc6c7'),    // AppSecret
-            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', 'your-token'),           // Token
-            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', ''),                 // EncodingAESKey
+            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', 'aoyuankj'),           // Token
+            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', 'J8hkKOuBH5jUekV5tURWxsrJYABF9SYsMlBwGaoeik2'),                 // EncodingAESKey
 
             /*
              * OAuth 配置
@@ -70,10 +70,10 @@ return [
              * scopes：公众平台（snsapi_userinfo / snsapi_base），开放平台：snsapi_login
              * callback：OAuth授权完成后的回调页地址(如果使用中间件，则随便填写。。。)
              */
-            // 'oauth' => [
-            //     'scopes'   => array_map('trim', explode(',', env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_SCOPES', 'snsapi_userinfo'))),
-            //     'callback' => env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_CALLBACK', '/examples/oauth_callback.php'),
-            // ],
+            'oauth' => [
+                'scopes'   => array_map('trim', explode(',', env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_SCOPES', 'snsapi_userinfo'))),
+                'callback' => env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_CALLBACK', '/geek/public/index.php/api/weixin/gethasopen'),
+            ],
         ],
     ],
 
@@ -107,12 +107,12 @@ return [
     'payment' => [
         'default' => [
             'sandbox'            => env('WECHAT_PAYMENT_SANDBOX', false),
-            'app_id'             => env('WECHAT_PAYMENT_APPID', '92260d5c2656a8ff98bb1fe906fcc6c7'),
+            'app_id'             => env('WECHAT_PAYMENT_APPID', 'wx0665fb4e5cb01453'),
             'mch_id'             => env('WECHAT_PAYMENT_MCH_ID', '1502049251'),
-            'key'                => env('WECHAT_PAYMENT_KEY', 'eGjIxh9JjWMzubcXLoyAXomI1wB1redy'),
+            'key'                => env('WECHAT_PAYMENT_KEY', '4SE7N9cK4Bx9sCVDY7y7sNvzHNQ4kIpC'),
             'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
             'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
-            'notify_url'         => 'https://www.aoyuankj.com/fenda/public/api/weixin/pay_code',                           // 默认支付结果通知地址
+            'notify_url'         => 'http://www.aoyuankj.com/geek/public/index.php/api/weixin/pay_code/',                           // 默认支付结果通知地址
         ],
         // ...
     ],

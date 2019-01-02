@@ -26,128 +26,223 @@ class Weixin extends Controller
     function __CONSTRUCT(){
         $this->user = Auth::user();
     }
-
-    protected function options(){ //选项设置
-		return [
-            // 前面的appid什么的也得保留哦
-            'app_id' => 'eGjIxh9JjWMzubcXLoyAXomI1wB1redy', //你的APPID
-            'secret'  => '92260d5c2656a8ff98bb1fe906fcc6c7',     // AppSecret
-            // 'token'   => 'your-token',          // Token
-            // 'aes_key' => '',                    // EncodingAESKey，安全模式下请一定要填写！！！
-            // ...
-            // payment
-            'payment' => [
-                'merchant_id'        => '1502049251',
-                'key'                => 'eGjIxh9JjWMzubcXLoyAXomI1wB1redy',
-                // 'cert_path'          => 'path/to/your/cert.pem', // XXX: 绝对路径！！！！
-                // 'key_path'           => 'path/to/your/key',      // XXX: 绝对路径！！！！
-                'notify_url'         => 'https://www.aoyuankj.com/fenda/public/api/weixin/pay_code',       // 你也可以在下单时单独设置来想覆盖它
-                // 'device_info'     => '013467007045764',
-                // 'sub_app_id'      => '',
-                // 'sub_merchant_id' => '',
-                // ...
-            ],
-        ];
-	}
+ 
     // 支付
     public function pay(){
-
-        return;
-        $app = EasyWeChat::officialAccount(); // 公众号
-      
-        $oauth = $app->oauth;
-
-        // 未登录
-        if (empty($_SESSION['wechat_user'])) {
-
-        $_SESSION['target_url'] = 'user/profile';
-
-        return $oauth->redirect();
-        // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
-        // $oauth->redirect()->send();
-        }
-
-
-
-    // 已经登录过
-    $user = $_SESSION['wechat_user'];
-
-        // $user = Auth::user();
-        $id = $user['id'];//用户id
+        
+        $user = Auth::user();
+        $user_openid = DB::table("users")
+            ->where("id",$user['id'])
+            ->value('openid');
         $price = request('price');
-        $type = request('type');
-        $detail = '';
-        if ( $type == 'price') {
-            $detail = '购买会员';
-        }
-        $mch_id = '1502049251';//你的MCH_ID
-            $options = $this->options();
+
+        if ($user_openid != '') {
+            $time = time();
+            $app = EasyWeChat::payment(); // 公众号
+
             
-  $payment = EasyWeChat::payment(); // 微信支付
+            $notify['type'] = request('type');//付款类型
+            // $notify['type'] = 'vip';//付款类型
 
-  $result = $payment->order->unify([
-    'body' => '腾讯充值中心-QQ会员充值',
-    'out_trade_no' => '20150806125346',
-    'total_fee' => 88,
-    'spbill_create_ip' => '123.12.12.123', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
-    'notify_url' => 'https://pay.weixin.qq.com/wxpay/pay.action', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
-    'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
-    'openid' => 'oUpF8uMuAJO_M2pxb1Q9zNjWeS6o',
-]);
+            // $notify['shop_id'] = 1;//商品id
+            $notify['shop_id'] = request('shop_id');//商品id
 
+            $notify['uid'] = $user['id'];//用户id
 
-            // $app = new Application($options);
-            // $payment = $app->payment;
-            // $out_trade_no = $mch_id.date("YmdHis"); //拼一下订单号
-            // $attributes = [
-            //     'trade_type'       => 'APP', // JSAPI，NATIVE，APP...
-            //     'body'             => '购买CSDN产品',
-            //     'detail'           => $detail, //我这里是通过订单找到商品详情，你也可以自定义
-            //     'out_trade_no'     => $out_trade_no,
-            //     'total_fee'        => $price*100, //因为是以分为单位，所以订单里面的金额乘以100
-            //     // 'notify_url'       => 'http://xxx.com/order-notify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
-            //     // 'openid'           => '当前用户的 openid', // trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识，
-            //     // ...
-            // ];
-            // $order = new Order($attributes);
-            // $result = $payment->prepare($order);
-        if ($result->return_code == 'SUCCESS' && $result->result_code == 'SUCCESS'){
-            $order_find->out_trade_no = $out_trade_no; //在这里更新订单的支付ID
-            $order_find->save();
-            // return response()->json(['result'=>$result]);
-                $prepayId = $result->prepay_id;
-                $config = $payment->configForAppPayment($prepayId);        
-                return response()->json($config);
+            $notify['price'] = $price;//价格
+
+            $notify['rand'] = rand ( 111111111, 999999999 );
+
+            $attach = implode("_",$notify);
+
+            $notify['out_trade_no']  = date('YmdHis',$time).mt_rand(1000,9999);
+            $result = $app->order->unify([
+                'body' => '会员充值',
+                'out_trade_no' => $notify['out_trade_no'],
+                // 'total_fee' => 0.01*100,
+                'total_fee' => $price*100,
+                'attach' => $attach,
+                'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
+                'openid' => $user_openid,
+            ]);
+             $appgzh = EasyWeChat::officialAccount(); // 公众号
+             $notify['openid'] = $user_openid;
+             $notify['attach'] = $attach;
+             DB::table("weixin_notify")->insert($notify);
+            // $result['prepay_id'] =  "prepay_id=".$result['prepay_id'];
+            // $result['time_stamp'] =  (string)$time;
+
+            // $result['gzh'] = $appgzh->jssdk->buildConfig(array('chooseWXPay'), true);
+             $ss = $app->jssdk->sdkConfig($result['prepay_id']);
+             $result['timestamp'] = $ss['timestamp'];
+
+             
+            //  appId: '', // 必填，公众号的唯一标识
+            //  timestamp: , // 必填，生成签名的时间戳
+            //  nonceStr: '', // 必填，生成签名的随机串
+            //  signature: '',// 必填，签名
+            
+            $result['jsApiList'] = ['chooseWXPay']; 
+            $result['nonceStr'] = $result['nonce_str']; 
+            $result['signature'] = $result['sign'];
+            $result['appId'] = $result['appid'];
+             $result['cfg'] = json_encode($result);
+           
+             $result['paySign'] = $ss['paySign'];
+             $result['package'] = $ss['package'];
+             
+             $result['gzh'] = $result;
+            //  $result['cfg'] = $appgzh->jssdk->buildConfig(array('chooseWXPay'),true);
+
+            // return $result;
+
+           return $app->jssdk->bridgeConfig($result['prepay_id']);
         }
+        
     }
 
     public function pay_code()
     {
-        $options = $this->options();
-        $app = new Application($options);
-    	$response = $app->payment->handleNotify(function($notify, $successful){
-		    // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
-		    $order = ExampleOrder::where('out_trade_no',$notify->out_trade_no)->first();
-		    if (count($order) == 0) { // 如果订单不存在
-		        return 'Order not exist.'; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
-		    }
-		    // 如果订单存在
-		    // 检查订单是否已经更新过支付状态
-		    if ($order->pay_time) { // 假设订单字段“支付时间”不为空代表已经支付
-		        return true; // 已经支付成功了就不再更新了
-		    }
-		    // 用户是否支付成功
-		    if ($successful) {
-		        // 不是已经支付状态则修改为已经支付状态
-		        $order->pay_time = time(); // 更新支付时间为当前时间
-		        $order->status = 6; //支付成功,
-		    } else { // 用户支付失败
-		        $order->status = 2; //待付款
-		    }
-		    $order->save(); // 保存订单
-		    return true; // 返回处理完成
-		});
+        
+        $app = EasyWeChat::payment();  
+        $response = $app->handlePaidNotify(function($notify, $fail){  
+             DB::table("weixin_notify")->where("id",1)->update(['attach'=>time()]);
+             
+            // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单  
+            $order =   DB::table("weixin_notify")->where('out_trade_no',$notify['out_trade_no'])->first(); 
+
+            if (count($order) == 0) { // 如果订单不存在 
+
+                return 'Order not exist.'; // 告诉微信，我已经处理完了，订单没找到，别再通知我了  
+            }  
+            // 如果订单存在  
+            // 检查订单是否已经更新过支付状态  
+            if ($order->pay_time!='') { // 假设订单字段“支付时间”不为空代表已经支付  
+
+                return true; // 已经支付成功了就不再更新了 
+
+            }  
+            
+            // 用户是否支付成功  
+            if ($notify['return_code'] === 'SUCCESS') { 
+
+                 // 用户是否支付成功
+                if (array_get($notify, 'result_code') === 'SUCCESS') {
+
+                     // 不是已经支付状态则修改为已经支付状态  
+                    $orderu['pay_time'] = time(); // 更新支付时间为当前时间  
+                    $orderu['status'] = 6; //支付成功,  
+
+                    $title =  '';
+                    if ($order->type == 'vip') {
+       
+                        // vip开通
+                        $list=db::table('users')->where('id',$order->uid)->update(['member'=>$order->shop_id]);
+                        $title = 'vip开通';
+     
+                    }
+             
+                    db::table('pay_record')->insert([
+                    'uid'=>$order->uid,'price'=>$order->price,'title'=>$title,'datetime'=>time()]);
+           
+                // 用户支付失败
+                } elseif (array_get($notify, 'result_code') === 'FAIL') {
+
+                    $orderu['status'] = 2; //待付款  
+                }
+
+               
+
+            } else { // 用户支付失败  
+                $orderu['status'] = 2; //待付款  
+                DB::table("weixin_notify")->where("id",1)->update(['attach'=>'通信失败，请稍后再通知我']);  
+            } 
+            DB::table("weixin_notify")->where("id",$order->id)->update($orderu);  
+
+            return true; // 返回处理完成  
+        });  
 
     }
+
+    // token验证
+    public function token()
+    {
+        $app = EasyWeChat::officialAccount(); // 公众号
+        
+        $response = $app->server->serve();
+        return $response;
+    }
+
+    // 自定义菜单
+    public function menu()
+    {
+        $app = EasyWeChat::officialAccount(); // 公众号
+        $buttons = [
+            [
+                "type" => "view",
+                "name" => "关于澳源",
+                "url"  => "http://www.aoyuankj.com/AboutUs/"
+            ],
+            [
+                "type" => "view",
+                "name" => "官网首页",
+                "url"  => "http://www.aoyuankj.com/"
+            ],
+            [
+                "name"       => "项目合作",
+                "sub_button" => [
+                    [
+                        "type" => "view",
+                        "name" => "项目合作",
+                        "url"  => "http://www.aoyuankj.com/productCenter/"
+                    ],
+                    [
+                        "type" => "view",
+                        "name" => "校企合作",
+                        "url"  => "http://www.aoyuankj.com/xqhz/"
+                    ]
+                ],
+            ],
+        ];
+        $app->menu->create($buttons);
+    }
+
+    // uauth授权
+    
+    public function getopenid(Request $request)
+    {
+        $app = EasyWeChat::officialAccount(); // 公众号
+        $response = $app->oauth->scopes(['snsapi_userinfo'])
+        ->setRequest($request)
+        ->redirect();
+
+        
+        return $response;
+    }
+
+    public function gethasopen()
+    {
+        $app = EasyWeChat::officialAccount(); // 公众号
+        $wxuser = $app->oauth->user();
+         
+         
+        $user = Auth::user();
+        $user_openid = DB::table("users")
+            ->where("id",$user['id'])
+            ->value('openid');
+        if (empty($user_openid)) {
+            $res = DB::table("users")
+            ->where("id",$user['id'])
+            ->update([
+                'openid'=>$wxuser->getId(),
+                'image'=>$wxuser->getAvatar(),
+                'username'=>$wxuser->getNickname(),
+            ]);
+        }    
+		
+       
+    }
+
+    
     
 }

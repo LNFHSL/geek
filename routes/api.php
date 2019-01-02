@@ -39,6 +39,11 @@ Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_ht $index, $a
 	return $index->$action();
 	});
 
+Route::get('weixin/token','Weixin@token');
+Route::get('weixin/menu','Weixin@menu');
+Route::get('weixin/getopenid','Weixin@getopenid');
+Route::any('weixin/pay_code','Weixin@pay_code');
+
 // 吴同学start
 /**
  * 首页界面接口
@@ -90,11 +95,13 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
 	
+Route::get('weixin/gethasopen','Weixin@gethasopen');
 	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
+	Route::post('weixin/pay/ggg','Weixin@pay');
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 	return $index->$action();
 	});

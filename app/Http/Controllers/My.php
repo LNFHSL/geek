@@ -227,8 +227,9 @@ class My extends Controller{
 	}
 	public function getUserInfo()
 	{
+		
 		$res = DB::table("users")->where("id",$this->user['id'])
-		->first(["image as userpic","username","score as scroll"]);
+		->first(["image as userpic","username","score as scroll","member"]);
 		echo json_encode($res);
 	}
  }

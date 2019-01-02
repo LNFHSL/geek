@@ -138,6 +138,7 @@ abstract class Handler
         }
 
         if (!is_array($message) || empty($message)) {
+
             throw new Exception('Invalid request XML.', 400);
         }
 
