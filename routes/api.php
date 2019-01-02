@@ -71,6 +71,8 @@ Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
 Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 // 获取分类详情
 Route::post('home/getCateChild','Home\View@getCateChild');
+// 获取活动列表
+Route::post('index/getActiveList','Home\View@getActiveList');
 
 /**
  * 公告类接口
