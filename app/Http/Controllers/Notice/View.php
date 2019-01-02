@@ -112,10 +112,12 @@ class View extends Controller{
               }  
               $notice_list = DB::table('notice_list')
               ->whereIn("id",$ida)
+              ->orderby("id","desc")
               ->get();
        }else{
               $notice_list = DB::table('notice_list')
               ->where($where_eq_a)
+              ->orderby("id","desc")
               ->get(); 
        }
              

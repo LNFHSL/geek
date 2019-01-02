@@ -139,6 +139,7 @@ class Manager extends Controller{
 		$list=db::table('notice_list')
             ->where(['uid'=>$uid])
             ->where($w_str)
+            ->orderby("id","desc")
             ->get();
            
 		return $list;
