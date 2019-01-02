@@ -282,7 +282,7 @@ class View extends Controller{
        $res = DB::table("notice_juese")
               ->join("notice_list","notice_juese.notice_id","=","notice_list.id")
               ->where("notice_id",request('noticeid'))
-              ->get(["title","talk_pay as equalpay","price"]);
+              ->get(["title","talk_pay as equalpay","price","type"]);
           
         return $res;
     }

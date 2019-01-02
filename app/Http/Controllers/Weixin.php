@@ -57,7 +57,7 @@ class Weixin extends Controller
 
             $notify['out_trade_no']  = date('YmdHis',$time).mt_rand(1000,9999);
             $result = $app->order->unify([
-                'body' => '会员充值',
+                'body' => '极客艺启',
                 'out_trade_no' => $notify['out_trade_no'],
                 // 'total_fee' => 0.01*100,
                 'total_fee' => $price*100,
@@ -135,11 +135,12 @@ class Weixin extends Controller
 
                     $title =  '';
                     if ($order->type == 'vip') {
-       
-                        // vip开通
-                        $list=db::table('users')->where('id',$order->uid)->update(['member'=>$order->shop_id]);
                         $title = 'vip开通';
-     
+                        $list=db::table('users')->where('id',$order->uid)->update(['member'=>$order->shop_id]);
+                    }elseif ($order->type == 'notice_pay') {
+                        $title = '发通告支付';
+                        $list=db::table('notice_list')->where('id',$order->shop_id)->update(['is_pay'=>1]);
+
                     }
              
                     db::table('pay_record')->insert([
