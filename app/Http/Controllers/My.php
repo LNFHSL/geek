@@ -152,6 +152,14 @@ class My extends Controller{
 	 	    'type'=>$type,'imgs'=>$imgs
 	 	]);
 	 }
+	 public function getsellerInfo(){   //获取商家或合伙人资料
+		$uid=$this->user['id'];
+		$info=DB::table('league')->where('uid',$uid)->get();
+		// foreach ($info as $key => $value) {	
+		// 	$info[0]->imgs = json_decode($value->imgs,true);
+		// };
+		return $info;
+	 }
 	  //------------------------------前端未写----------------------
 	  
 	public function balance_tips(){  //余额支付提示  
