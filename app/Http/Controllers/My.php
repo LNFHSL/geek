@@ -235,9 +235,22 @@ class My extends Controller{
 	}
 	public function getUserInfo()
 	{
+		
 		$res = DB::table("users")->where("id",$this->user['id'])
-		->first(["image as userpic","username","score as scroll"]);
+		->first(["image as userpic","username","score as scroll","member","type"]);
 		echo json_encode($res);
+	}
+
+	// 活动数量
+	public function activity_tips()
+	{
+		$list=db::table('active_list')->where('uid',$this->user['id'])->get(["id"]);
+		return $list;
+	}
+
+	public function getsellerInfo()
+	{
+		
 	}
  }
 ?>

@@ -27,6 +27,13 @@ class Active extends Controller
         unset($input['token']);
 
         $input['create_time'] = time();
+        $input['allAge'] = $input['age']['allAge'];
+        $input['ageStar'] = $input['age']['ageStar'];
+        $input['ageEnd'] = $input['age']['ageEnd'];
+        unset($input['age']);
+      
+        // 计算截止还有多少天
+        $input['time'] = round(( strtotime($input['end_time']) -  strtotime($input['start_time'])) / 86400);
         
         $id = DB::table("active_list")->insert($input);
 
@@ -36,7 +43,11 @@ class Active extends Controller
     }
     // 获取活动列表
     public function getActiveList(){
-        $activeArr=DB::table("active_list")->where('time','>','0')->select('id','thumb','title','money','place','time')->get();
+        $activeArr=DB::table("active_list")
+            ->where('time','>','0')
+            ->select('id','thumb','title','money','place','time')
+            ->orderby("id","desc")
+            ->get();
         return $activeArr;
     }
     //获取活动详情
@@ -44,4 +55,35 @@ class Active extends Controller
         $activeObj=DB::table("active_list")->where(['id'=>request('id')])->get();
         return $activeObj;
     }
+
+    public function lists()
+    {
+        $uid=$this->user['id'];
+        $w_str = [];  
+		$list=db::table('active_list')
+            ->where(['uid'=>$uid]) 
+            ->orderby("id","desc")
+            ->get();
+        $rtn_a =  [];
+        foreach ($list as $key => $value) {
+            $tmp['id'] = $value->id;
+            $tmp['activeUrl'] = $value->thumb;
+            $tmp['activeTitle'] = $value->title;
+            $tmp['activeSprice'] = $value->money;
+            $tmp['activeDiqu'] = $value->place;
+            $tmp['activeTime'] = $value->time;
+            $tmp['activePeople'] = $value->people;
+            $rtn_a[] = $tmp; 
+        }   
+        return $rtn_a;
+         
+    }
+
+    // 查看详情
+    public function view()
+    {
+       $activeDetail = DB::table('active_list')->where(['id'=>request('id')])->first();
+       echo  json_encode($activeDetail);
+    }
+    
 }

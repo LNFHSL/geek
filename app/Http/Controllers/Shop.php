@@ -19,7 +19,9 @@ class Shop extends Controller{
 		    $list_score=db::table('users')->where('id',$user['id'])->value('score');
 			$list_shopMyGoods=db::table('goods')->where('integral', '<=',$list_score)->get();
 			$list_shopAllGood=db::table('goods')->select('id','name','classify','integral','image')->get();
-			return (['shopMyGoods'=>$list_shopMyGoods,'shopAllGood'=>$list_shopAllGood]);
+			$list_classify=db::table('goods_classify')->get();
+			
+			return (['shopMyGoods'=>$list_shopMyGoods,'shopAllGood'=>$list_shopAllGood,'shopDrop'=>$list_classify]);
 			
 		}
 	
@@ -28,6 +30,38 @@ class Shop extends Controller{
 	    	$list=db::table('goods')->where('id',$id)->first();
 			 return json_encode($list);
 	    }
+		public function getFilterGoods(){
+			
+			$dropClicks=request('dropClicks');
+			$classify=request('fl');
+
+			if($classify=='fl'){
+				$list=db::table('goods')->where('classify',$dropClicks)->get();
+			    return (['shopAllGoods'=>$list]);
+			}
+			else if($classify=='jg'){ //低到高
+				if($dropClicks== '0'){
+					
+					$list=db::table('goods')->orderBy('change','asc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}else{
+					$list=db::table('goods')->orderBy('change','desc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}
+			}
+			else if($classify=='xl'){
+				
+				if($dropClicks== '0'){
+					$list=db::table('goods')->orderBy('integral','asc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}else{
+					$list=db::table('goods')->orderBy('integral','desc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}
+			}
+			
+			
+		}
 
 }
 ?>

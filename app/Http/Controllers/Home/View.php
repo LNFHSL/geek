@@ -213,4 +213,14 @@ class View extends Controller
           
          
      }
+     // 获取活动列表
+    public function getActiveList(){
+          $activeArr=DB::table("active_list")
+          ->where('time','>','0')
+          ->select('id','thumb','title','money','place','time')
+          ->orderby("id","desc")
+          ->limit(3)
+          ->get();
+          return $activeArr;
+     }
 }
