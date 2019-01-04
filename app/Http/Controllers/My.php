@@ -229,8 +229,20 @@ class My extends Controller{
 	{
 		
 		$res = DB::table("users")->where("id",$this->user['id'])
-		->first(["image as userpic","username","score as scroll","member"]);
+		->first(["image as userpic","username","score as scroll","member","type"]);
 		echo json_encode($res);
+	}
+
+	// 活动数量
+	public function activity_tips()
+	{
+		$list=db::table('active_list')->where('uid',$this->user['id'])->get(["id"]);
+		return $list;
+	}
+
+	public function getsellerInfo()
+	{
+		
 	}
  }
 ?>

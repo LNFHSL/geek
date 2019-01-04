@@ -26,7 +26,11 @@ class Notice extends Controller{
 	
 	public function getpartnotice_tips(){ //我参加的通告 提示     前端为添加
 		$uid=$this->user['id'];
-		$list=db::table('partnotice')->where([['uid',$uid],['tips','0']])->get();
+		if($this->user['type'] >1){
+			$list=db::table('notice_list')->where('uid',$uid)->get(['uid']);
+		}else{
+			$list=db::table('partnotice')->where([['uid',$uid],['tips','0']])->get();
+		}
 		return $list;
 	}
 	
