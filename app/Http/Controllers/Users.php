@@ -15,7 +15,7 @@ class Users extends Controller{
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->accessToken;
            return (['code'=>'0','msg'=>'登录成功','token'=>$success['token'],'type'=>$user['type'],
-           'unreads'=>$user['unreads']
+           'unreads'=>$user['unreads'],'openid'=>$user['openid']
            ]);
         }
         else{

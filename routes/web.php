@@ -13,12 +13,7 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('c');
 });
 
-Route::group(['middleware' => 'auth:api'], function(){
-
-	//支付
-	Route::post('fenda/public/api/weixin/pay','Weixin@pay');
-	
-});
+ 

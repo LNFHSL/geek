@@ -34,7 +34,7 @@ class Active extends Controller
         unset($input['age']);
       
         // 计算截止还有多少天
-        $input['time'] = round(( strtotime($input['end_time']) - $input['start_time']) / 86400);
+        $input['time'] = round(( strtotime($input['end_time']) -  strtotime($input['start_time'])) / 86400);
         
         $id = DB::table("active_list")->insert($input);
 
@@ -42,10 +42,13 @@ class Active extends Controller
     
         return response()->json(['msg'=>'添加成功','code'=>200]);      
     }
-<<<<<<< HEAD
     // 获取活动列表
     public function getActiveList(){
-        $activeArr=DB::table("active_list")->where('time','>','0')->select('id','thumb','title','money','place','time')->get();
+        $activeArr=DB::table("active_list")
+            ->where('time','>','0')
+            ->select('id','thumb','title','money','place','time')
+            ->orderby("id","desc")
+            ->get();
         return $activeArr;
     }
     //获取活动详情
@@ -54,7 +57,6 @@ class Active extends Controller
         $activeObj=DB::table("active_list")->where('id',$id)->get();
         return $activeObj;
     }
-=======
 
     public function lists()
     {
@@ -62,6 +64,7 @@ class Active extends Controller
         $w_str = [];  
 		$list=db::table('active_list')
             ->where(['uid'=>$uid]) 
+            ->orderby("id","desc")
             ->get();
         $rtn_a =  [];
         foreach ($list as $key => $value) {
@@ -85,5 +88,4 @@ class Active extends Controller
        echo  json_encode($activeDetail);
     }
     
->>>>>>> 793987f411b85175ca8b6b14917fa008684312db
 }

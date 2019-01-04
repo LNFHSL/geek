@@ -30,6 +30,7 @@ class Manager extends Controller{
         
         $juese_list =  $input['juese_list'];
         unset($input['juese_list']);
+        unset($input['edit_id']);
         $id = DB::table("notice_list")->insertGetId($input);
 
         $people = 0 ;
@@ -52,7 +53,7 @@ class Manager extends Controller{
        //  修改人数
        DB::table("notice_list")->where("id",$id)->update(['people'=>$people]);
     
-        return response()->json(['msg'=>'添加成功','code'=>200]);      
+        return response()->json(['msg'=>'添加成功','code'=>200,'id'=>$id]);      
     }
 
     // 进入编辑查询
@@ -138,6 +139,7 @@ class Manager extends Controller{
 		$list=db::table('notice_list')
             ->where(['uid'=>$uid])
             ->where($w_str)
+            ->orderby("id","desc")
             ->get();
            
 		return $list;

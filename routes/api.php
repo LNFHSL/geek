@@ -39,6 +39,12 @@ Route::post('user/uploadJoinPic','My@uploadJoinPic');
 Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
 	return $index->$action();
 	});
+
+Route::get('weixin/token','Weixin@token');
+Route::get('weixin/menu','Weixin@menu');
+Route::get('weixin/getopenid','Weixin@getopenid');
+Route::any('weixin/pay_code','Weixin@pay_code');
+
 //后台管理系统 审核加盟	
     Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
 	    return $index->$action();
@@ -65,6 +71,8 @@ Route::post('index/gettuijianbaby2','Home\View@getOhterRecommendChild');
 Route::post('index/gettuijianbaby','Home\View@getRecommendChild');
 // 获取分类详情
 Route::post('home/getCateChild','Home\View@getCateChild');
+// 获取活动列表
+Route::post('index/getActiveList','Home\View@getActiveList');
 
 /**
  * 公告类接口
@@ -94,11 +102,13 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
 	
+Route::get('weixin/gethasopen','Weixin@gethasopen');
 	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
+	Route::post('weixin/pay/ggg','Weixin@pay');
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 	return $index->$action();
 	});
