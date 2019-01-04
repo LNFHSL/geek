@@ -31,12 +31,36 @@ class Shop extends Controller{
 			 return json_encode($list);
 	    }
 		public function getFilterGoods(){
-			$input=request()->all();
-			print_r($input['type']);exit();
+			
+			$dropClicks=request('dropClicks');
+			$classify=request('fl');
+
+			if($classify=='fl'){
+				$list=db::table('goods')->where('classify',$dropClicks)->get();
+			    return (['shopAllGoods'=>$list]);
+			}
+			else if($classify=='jg'){ //低到高
+				if($dropClicks== '0'){
+					
+					$list=db::table('goods')->orderBy('change','asc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}else{
+					$list=db::table('goods')->orderBy('change','desc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}
+			}
+			else if($classify=='xl'){
+				
+				if($dropClicks== '0'){
+					$list=db::table('goods')->orderBy('integral','asc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}else{
+					$list=db::table('goods')->orderBy('integral','desc')->get();
+					  return (['shopAllGoods'=>$list]);
+				}
+			}
 			
 			
-			$list=db::table('goods')->where($input)->get();
-			return $list;
 		}
 
 }
