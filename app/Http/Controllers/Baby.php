@@ -49,7 +49,6 @@ class Baby extends Controller
     public function getBabyCard()
     {
         $info = DB::table('baby_card')->where("id", $this->user['id'])->get();
-
         $videos = DB::table('baby_video')->select("id", "url", "createtime")->where("babyid", $this->user['id'])->count();
         $shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", $this->user['id'])->value('content');
         $showexp = DB::table('baby_experience')->where("type", 'show')->where("babyid", $this->user['id'])->value('content');

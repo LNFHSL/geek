@@ -152,6 +152,14 @@ class My extends Controller{
 	 	    'type'=>$type,'imgs'=>$imgs
 	 	]);
 	 }
+	 public function getsellerInfo(){   //获取商家或合伙人资料
+		$uid=$this->user['id'];
+		$info=DB::table('league')->where('uid',$uid)->get();
+		// foreach ($info as $key => $value) {	
+		// 	$info[0]->imgs = json_decode($value->imgs,true);
+		// };
+		return $info;
+	 }
 	  //------------------------------前端未写----------------------
 	  
 	public function balance_tips(){  //余额支付提示  
@@ -229,8 +237,20 @@ class My extends Controller{
 	{
 		
 		$res = DB::table("users")->where("id",$this->user['id'])
-		->first(["image as userpic","username","score as scroll","member"]);
+		->first(["image as userpic","username","score as scroll","member","type"]);
 		echo json_encode($res);
+	}
+
+	// 活动数量
+	public function activity_tips()
+	{
+		$list=db::table('active_list')->where('uid',$this->user['id'])->get(["id"]);
+		return $list;
+	}
+
+	public function getsellerInfo()
+	{
+		
 	}
  }
 ?>

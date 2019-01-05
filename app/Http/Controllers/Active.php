@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Db;
 use App\User;
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -20,12 +20,11 @@ class Active extends Controller
     function __CONSTRUCT(){
         $this->user = Auth::user();
     }
-
-    // 保存
     public function save()
     {
         $input = request()->all();
         $input['uid'] = $this->user['id'];
+        unset($input['token']);
 
         $input['create_time'] = time();
         $input['allAge'] = $input['age']['allAge'];
@@ -53,8 +52,7 @@ class Active extends Controller
     }
     //获取活动详情
     public function show(){
-        $id=request("id");
-        $activeObj=DB::table("active_list")->where('id',$id)->get();
+        $activeObj=DB::table("active_list")->where(['id'=>request('id')])->get();
         return $activeObj;
     }
 
