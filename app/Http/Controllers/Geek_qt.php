@@ -13,19 +13,26 @@ class Geek_qt extends Controller{
 	
 	public function wait(){  //待审核   
 	   $list=db::table('league')
-	   ->where('state',0)->select('id','shopname','contacter','contacttel','students','date','state')
+	   ->where('state',0)->select('id','uid','shopname','contacter','contacttel','students','date','state','type')
 	   ->get();
 	   foreach($list as $key=>$value){
 	  	 $list[$key]->date = date('Y-m-d',$value->date);
 	     }
 	   return $list;
 	}
-	public function operation(){ //
+	public function operation(){ //审核  
 		$id=request('id');
+		$uid=request('uid');
 		$state=request('state');
+		$type=request('type');
+		$list_user=db::table('users')->where('id',$uid)->update(['type'=>$type]);
+		if($list_user){
 		$list=db::table('league')->where('id',$id)->update(['state'=>$state]);
 		if($list){
 			return 1;
+		}else{
+			return 2;
+		}
 		}else{
 			return 2;
 		}
@@ -120,8 +127,35 @@ class Geek_qt extends Controller{
 	public function meng_wa_xq(){ //萌娃详情
 	    $id=request('id');
 		$list=db::table('baby_info')->where('id',$id)->first();
-		return $list;
+		$list_img=db::table('baby_uploadimage')->where('babyid',$id)->select('file')->get();
+		return(['list'=>$list,'list_img'=>$list_img]);
 		
 	}
+	public function meng_wa_search(){//萌娃搜索
+		$list=db::table('baby_info')->where('name',request('name'))->get();
+		return $list;
+	}
+	public function vip(){ //添加vip
+		$input=request()->all();
+		$list=db::table('vip')->insert($input);
+	}
+	public function display_vip(){ //查询显示vip
+		$list=db::table('vip')->get();
+		return $list;
+	}
+	public function delete_vip(){ //删除vip
+	    $list=db::table('vip')->where('id', request('id'))->delete();
+		if($list){
+			return 1;
+		}else{
+			return 2;
+		}
+		
+	}
+	public function display_user(){
+		$list=db::table('users')->where('member','>',0)->select('member','username')->get();
+		return $list;
+	}
+	
 }	
 ?>

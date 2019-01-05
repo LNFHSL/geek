@@ -35,20 +35,23 @@ Route::post('baby/getCardModel', 'Baby@getCardModel');
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');
 
-//后台管理系统 商品
-Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
-	return $index->$action();
-	});
-
 Route::get('weixin/token','Weixin@token');
 Route::get('weixin/menu','Weixin@menu');
 Route::get('weixin/getopenid','Weixin@getopenid');
 Route::any('weixin/pay_code','Weixin@pay_code');
 
+//后台管理系统 商品
+Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
+	return $index->$action();
+	});
 //后台管理系统 审核加盟	
-    Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
+Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
 	    return $index->$action();
 	});
+//管理头条
+Route::post('headline/{action}', function(App\Http\Controllers\Geek_headline $index, $action){
+    return $index->$action();
+});	
 // 吴同学start
 /**
  * 首页界面接口
