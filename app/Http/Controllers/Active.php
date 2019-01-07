@@ -43,11 +43,20 @@ class Active extends Controller
     }
     // 获取活动列表
     public function getActiveList(){
-        $activeArr=DB::table("active_list")
+        $type=request("type");
+        if($type==""){
+            $activeArr=DB::table("active_list")
             ->where('time','>','0')
             ->select('id','thumb','title','money','place','time')
             ->orderby("id","desc")
             ->get();
+        }else{
+            $activeArr=DB::table("active_list")
+            ->where(['film'=>$type])
+            ->select('id','thumb','title','money','place','time')
+            ->orderby("id","desc")
+            ->get();
+        };
         return $activeArr;
     }
     //获取活动详情

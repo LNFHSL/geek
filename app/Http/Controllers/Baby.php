@@ -74,14 +74,14 @@ class Baby extends Controller
     // 萌娃详情
     public function getbabyinfo()
     {
-        $info = DB::table('baby_info')->where("uid", $this->user['id'])->first();
+        $info = DB::table('baby_info')->where("id", request('babyid'))->first();
         $info->lookstyle = explode(",", $info->lookstyle);
         $info->speciality = explode(",", $info->speciality);
 
-        $info->videos = DB::table('baby_video')->select("id", "url", "createtime")->where("babyid", $info->uid)->get();
-        $info->shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", $this->user['id'])->value('content');
-        $info->showexp = DB::table('baby_experience')->where("type", 'show')->where("babyid", $this->user['id'])->value('content');
-        $info->awardexp = DB::table('baby_experience')->where("type", 'award')->where("babyid", $this->user['id'])->value('content');
+        $info->videos = DB::table('baby_video')->select("id", "url", "createtime")->where("babyid", request('babyid'))->get();
+        $info->shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", request('babyid'))->limit(4)->get();
+        $info->showexp = DB::table('baby_experience')->where("type", 'show')->where("babyid", request('babyid'))->limit(4)->get();
+        $info->awardexp = DB::table('baby_experience')->where("type", 'award')->where("babyid", request('babyid'))->limit(4)->get();
 
         return response()->json($info);
     }
@@ -94,18 +94,21 @@ class Baby extends Controller
             'image' => $info
         ]);
     }
-    public function delimages()
+    public function delimages()  //三类经历和三类照片 多图删除
     {
-        $id = request('id');
-        $info = DB::table('baby_uploadimage')->where("id", $id)->delete();
+        $ids = request('ids');
+        foreach ($ids as $key => $value) {
+            $info = DB::table('baby_uploadimage')->where("id", $value)->delete();
+        }
+        
         DB::table('baby_card')->where("id", $this->user['id'])->decrement('images');
 
         return ['code' => $info];
     }
     public function delimage()
     {
-
-
+        $id = request('id');
+        $info = DB::table('baby_uploadimage')->where("id", $id)->delete();
         return ['code' => 66];
     }
     public function addVideo()
@@ -122,11 +125,32 @@ class Baby extends Controller
         $id = DB::table("baby_experience")->insertGetId($input);
         return ['id' => $id];
     }
-    public function getexperience()
+    public function editorexperience()
     {
         $input = request()->all();
-        $info = DB::table("baby_experience")->where($input)->first();
-        return response()->json($info);
+        DB::table("baby_experience")->where(
+            ['id'=>request('id')],
+            ['babyid'=>request('babyid')],
+            ['type'=>request('type')]
+        )->update(['content' => request('content')]);
+        return response()->json(['msg' => '修改成功', 'code' => 200]);
+    }
+    public function getexperience()
+    {
+        if(request('type')==''){ //获取三类经历信息
+            $shotexp=DB::table("baby_experience")->where('babyid',request('babyid'))->where('type','shot')->get(); //拍摄
+            $showexp=DB::table("baby_experience")->where('babyid',request('babyid'))->where('type','show')->get(); //演出
+            $awardexp=DB::table("baby_experience")->where('babyid',request('babyid'))->where('type','award')->get();//获奖
+            return response()->json(['shotexp'=>$shotexp,'showexp'=>$showexp,'awardexp'=>$awardexp]);
+        }else if(request('type')!='' && request('id')==''){  //获取某类经历信息
+            $info = DB::table("baby_experience")->where('babyid',request('babyid'))->where('type',request('type'))->get();
+            return response()->json($info);
+        }else{  //获取某类经历的一条信息
+            $input = request()->all();
+            $info = DB::table("baby_experience")->where($input)->first();
+            $info->image = DB::table("baby_uploadimage")->where('babyid',request('babyid'))->where('type',request('type'))->select('id','file as url')->get();
+            return response()->json($info);
+        }
     }
 
 
