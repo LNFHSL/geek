@@ -45,7 +45,6 @@ Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index,
 	return $index->$action();
 	});
 //后台管理系统 审核加盟	
-<<<<<<< HEAD
 Route::any('notice/noticeTypeShow','Notice@noticeTypeShow');
 
     Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
@@ -56,15 +55,6 @@ Route::any('notice/noticeTypeShow','Notice@noticeTypeShow');
 Route::post('headline/{action}', function(App\Http\Controllers\Headline $index, $action){
     return $index->$action();
 });
-=======
-Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
-	    return $index->$action();
-	});
-//管理头条
-Route::post('headline/{action}', function(App\Http\Controllers\Geek_headline $index, $action){
-    return $index->$action();
-});	
->>>>>>> 4f7b129c17897f87df34bc5e4eeddf3d4264ebc5
 // 吴同学start
 /**
  * 首页界面接口
