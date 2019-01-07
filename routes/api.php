@@ -46,9 +46,16 @@ Route::get('weixin/getopenid','Weixin@getopenid');
 Route::any('weixin/pay_code','Weixin@pay_code');
 
 //后台管理系统 审核加盟	
+Route::any('notice/noticeTypeShow','Notice@noticeTypeShow');
+
     Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
 	    return $index->$action();
 	});
+		
+//管理头条
+Route::post('headline/{action}', function(App\Http\Controllers\Headline $index, $action){
+    return $index->$action();
+});
 // 吴同学start
 /**
  * 首页界面接口

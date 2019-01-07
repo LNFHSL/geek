@@ -120,7 +120,7 @@ class Geek_qt extends Controller{
 	public function meng_wa_xq(){ //萌娃详情
 	    $id=request('id');
 		$list=db::table('baby_info')->where('id',$id)->first();
-		return $list;
+		echo  json_encode($list);
 		
 	}
 }	

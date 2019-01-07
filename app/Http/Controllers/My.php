@@ -248,9 +248,5 @@ class My extends Controller{
 		return $list;
 	}
 
-	public function getsellerInfo()
-	{
-		
-	}
  }
 ?>
