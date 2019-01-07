@@ -118,16 +118,14 @@ class View extends Controller
          $id=request('id');
          if($id){
                $info = DB::table('baby_info')->where('id', $id)->first();
-               // $info->lookstyle = explode(",", $info->lookstyle);
-               // $info->speciality = explode(",", $info->speciality);
+               $info->lookstyle = explode(",", $info->lookstyle);
+               $info->speciality = explode(",", $info->speciality);
        
                $info->videos = DB::table('baby_video')->select("id","url","createtime")->where("babyid", $info->uid)->get();
-               $info->shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", request('babyid'))->limit(4)->get();
-               $info->showexp = DB::table('baby_experience')->where("type", 'show')->where("babyid", request('babyid'))->limit(4)->get();
-               $info->awardexp = DB::table('baby_experience')->where("type", 'award')->where("babyid", request('babyid'))->limit(4)->get();
+               $info->shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", $id)->limit(4)->get();
+               $info->showexp = DB::table('baby_experience')->where("type", 'show')->where("babyid", $id)->limit(4)->get();
+               $info->awardexp = DB::table('baby_experience')->where("type", 'award')->where("babyid", $id)->limit(4)->get();
 
-               
-               $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->uid)->get(['id','file as url']);
                
                $info->arts = DB::table('baby_uploadimage')->where("type",'art')->where("babyid",$info->uid)->get(['id','file as url']);
                
