@@ -48,7 +48,13 @@ class Baby extends Controller
     // 萌娃卡片
     public function getBabyCard()
     {
-        $info = DB::table('baby_card')->where("id", $this->user['id'])->get();
+        if (request("babyid")) {
+            $info = DB::table('baby_card')->where("id", request("babyid"))->get();
+            $this->user['id'] = request("babyid");
+        }else{
+            $info = DB::table('baby_card')->where("uid", $this->user['id'])->get();
+        }
+       
         $videos = DB::table('baby_video')->select("id", "url", "createtime")->where("babyid", $this->user['id'])->count();
         $shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", $this->user['id'])->value('content');
         $showexp = DB::table('baby_experience')->where("type", 'show')->where("babyid", $this->user['id'])->value('content');
@@ -75,8 +81,13 @@ class Baby extends Controller
     public function getbabyinfo()
     {
         $info = DB::table('baby_info')->where("id", request('babyid'))->first();
-        $info->lookstyle = explode(",", $info->lookstyle);
+        if ($info->lookstyle) {
+         $info->lookstyle = explode(",", $info->lookstyle);
+        }
+        if ($info->speciality) {
         $info->speciality = explode(",", $info->speciality);
+             
+        }
 
         $info->videos = DB::table('baby_video')->select("id", "url", "createtime")->where("babyid", request('babyid'))->get();
         $info->shotexp = DB::table('baby_experience')->where("type", 'shot')->where("babyid", request('babyid'))->limit(4)->get();
@@ -97,6 +108,9 @@ class Baby extends Controller
     public function delimages()  //三类经历和三类照片 多图删除
     {
         $ids = request('ids');
+        if (empty($ids)) {
+            return;
+        }
         foreach ($ids as $key => $value) {
             $info = DB::table('baby_uploadimage')->where("id", $value)->delete();
         }
@@ -202,11 +216,12 @@ class Baby extends Controller
         $input = request()->all();
         $input['uid'] = $this->user['id'];
         unset($input['token']);
-        $id = DB::table("baby_info")->insert($input);
+        $id = DB::table("baby_info")->insertGetId($input);
 
 
         DB::table("baby_card")->insert([
-            'id' => $input['uid'],
+            'id' => $id,
+            'uid' => $input['uid'],
             'name' => request('name')
         ]);
         return response()->json(['msg' => '添加成功', 'code' => 200]);

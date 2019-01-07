@@ -127,9 +127,6 @@ class Geek_qt extends Controller{
 	public function meng_wa_xq(){ //萌娃详情
 	    $id=request('id');
 		$list=db::table('baby_info')->where('id',$id)->first();
-<<<<<<< HEAD
-		echo  json_encode($list);
-=======
 		$list_img=db::table('baby_uploadimage')->where('babyid',$id)->select('file')->get();
 		return(['list'=>$list,'list_img'=>$list_img]);
 		
@@ -153,7 +150,6 @@ class Geek_qt extends Controller{
 		}else{
 			return 2;
 		}
->>>>>>> 4f7b129c17897f87df34bc5e4eeddf3d4264ebc5
 		
 	}
 	public function display_user(){
