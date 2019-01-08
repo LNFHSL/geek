@@ -155,9 +155,7 @@ class My extends Controller{
 	 public function getsellerInfo(){   //获取商家或合伙人资料
 		$uid=$this->user['id'];
 		$info=DB::table('league')->where('uid',$uid)->get();
-		// foreach ($info as $key => $value) {	
-		// 	$info[0]->imgs = json_decode($value->imgs,true);
-		// };
+		// 
 		return $info;
 	 }
 	  //------------------------------前端未写----------------------
@@ -235,18 +233,9 @@ class My extends Controller{
 	}
 	public function getUserInfo()
 	{
-		
 		$res = DB::table("users")->where("id",$this->user['id'])
-		->first(["image as userpic","username","score as scroll","member","type"]);
+		->first(["image as userpic","username","score as scroll"]);
 		echo json_encode($res);
 	}
-
-	// 活动数量
-	public function activity_tips()
-	{
-		$list=db::table('active_list')->where('uid',$this->user['id'])->get(["id"]);
-		return $list;
-	}
-
  }
 ?>

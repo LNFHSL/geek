@@ -136,7 +136,11 @@ class Baby extends Controller
     public function addexperience()
     {
         $input = request()->all();
+        unset($input['imgUrls']);
         $id = DB::table("baby_experience")->insertGetId($input);
+        foreach (request('imgUrls') as $key => $value) {
+            DB::table('baby_uploadimage')->where("file", $value)->update(['cid' => $id]);
+        };
         return ['id' => $id];
     }
     public function editorexperience()
@@ -147,6 +151,9 @@ class Baby extends Controller
             ['babyid'=>request('babyid')],
             ['type'=>request('type')]
         )->update(['content' => request('content')]);
+        foreach (request('imgUrls') as $key => $value) {
+            DB::table('baby_uploadimage')->where("file", $value)->update(['cid' => request('id')]);
+        };
         return response()->json(['msg' => '修改成功', 'code' => 200]);
     }
     public function getexperience()
@@ -161,8 +168,9 @@ class Baby extends Controller
             return response()->json($info);
         }else{  //获取某类经历的一条信息
             $input = request()->all();
-            $info = DB::table("baby_experience")->where($input)->first();
-            $info->image = DB::table("baby_uploadimage")->where('babyid',request('babyid'))->where('type',request('type'))->select('id','file as url')->get();
+            unset($input['id']);
+            $info = DB::table("baby_experience")->where($input)->where('id',request('id'))->first();
+            $info->image = DB::table("baby_uploadimage")->where('babyid',request('babyid'))->where('type',request('type'))->where('cid',request('id'))->select('id','file as url')->get();
             return response()->json($info);
         }
     }
@@ -223,6 +231,7 @@ class Baby extends Controller
             'id' => $id,
             'uid' => $input['uid'],
             'name' => request('name')
+            // 'headpic' => request('headpic'),
         ]);
         return response()->json(['msg' => '添加成功', 'code' => 200]);
 
