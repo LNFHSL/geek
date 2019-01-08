@@ -84,10 +84,10 @@ class Notice extends Controller{
             return ['state'=>0];
         }
     }
-
-	
-	
-	
+    public function noticeShow(){   //通告列表
+        $list=Db::table('notice_list')->paginate(10);
+        return $list;
+    }
 }
 	
 ?>

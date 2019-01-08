@@ -284,5 +284,24 @@ class Baby extends Controller
         }
         return $rtn;
     }
-
+    public function babyShow(){ //查看已认证萌娃
+        $id=request()->input('id');
+        if(empty($id)){
+            $list=Db::table('baby_info')->where('isAuth',1)->paginate(10);
+            return $list;
+        }else{
+            $list=Db::table('baby_info')->where('id',$id)->first();
+            return response()->json($list);
+        }
+    }
+    public function changeRcmd(){   //修改推荐    //mark
+        $id=request()->input('id');
+        $Recommend=request()->input('Recommend');
+        $res=Db::table('baby_info')->where('id',$id)->update(['Recommend'=>$Recommend]);
+        if($res){
+            return ['state'=>1];
+        }else{
+            return ['state'=>0];
+        }
+    }
 }
