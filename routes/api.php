@@ -56,6 +56,17 @@ Route::any('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $ac
 Route::post('headline/{action}', function(App\Http\Controllers\Headline $index, $action){
     return $index->$action();
 });
+
+//通告类型增加和删除
+Route::post('notice/addNoticeType','Notice@addNoticeType');
+Route::post('notice/delNoticeType','Notice@delNoticeType');
+//通告查询
+Route::post('notice/noticeShow','Notice@noticeShow');
+
+//已验证萌娃查询
+Route::post('baby/babyShow','Baby@babyShow');
+//萌娃推荐
+Route::post('baby/changeRcmd','Baby@changeRcmd');
 // 吴同学start
 /**
  * 首页界面接口
