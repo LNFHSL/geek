@@ -64,6 +64,11 @@ class Headline extends Controller{
     }
     public function delHeadline(){  //删除头条
         $input=request()->input('id');
+        $headline=Db::table('headline')->where('id',$input)->first();
+        if(!empty($headline->cover)){
+            $imgUrl=base_path().'/public'.str_replace('\\','/',$headline->cover);
+            unlink($imgUrl);
+        }
         $res=Db::table('headline')->where('id',$input)->delete();
         if($res){
             return ['state'=>'1'];
@@ -78,6 +83,7 @@ class Headline extends Controller{
                 'content'=>$input['content'],
                 'date'=>$input['date'],
                 'time'=>$input['time'],
+                'cover'=>$input['cover'],
                 'type'=>$input['type']
             ]);
         if($res){
