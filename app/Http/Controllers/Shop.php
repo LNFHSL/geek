@@ -27,7 +27,8 @@ class Shop extends Controller{
 	
 	    public function goodsDetail(){  //商品详情
 	    	$id=request('id');
-	    	$list=db::table('goods')->where('id',$id)->first();
+			$list=db::table('goods')->where('id',$id)->first();
+			$list->isCollection = false;
 			 return json_encode($list);
 	    }
 		public function getFilterGoods(){
