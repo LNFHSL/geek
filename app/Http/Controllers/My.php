@@ -171,7 +171,7 @@ class My extends Controller{
 		db::table('pay_record')->where('uid',$uid)->update(['tips'=>'1']);
     }
 	
-	public function open_member(){     //开通vip
+	public function open_member(){ \    //开通vip
 		$vip_type=request('vip_type'); 
 		$uid=$this->user['id'];
 		$date=date();
