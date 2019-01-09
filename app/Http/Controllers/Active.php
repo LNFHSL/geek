@@ -62,6 +62,20 @@ class Active extends Controller
     //获取活动详情
     public function show(){
         $activeObj=DB::table("active_list")->where(['id'=>request('id')])->get();
+        $activeObj->isPart = false;
+        $activeObj->isCollection = false;
+        
+        $user = Auth::user();
+         
+        if ($user) {  
+               $c = DB::table("collection")
+               ->where("contentid",request('id'))
+               ->where("uid",$user['id'])
+               ->count();
+               if ($c>0) {
+                      $activeObj->isCollection = true;
+               }
+        }
         return $activeObj;
     }
 

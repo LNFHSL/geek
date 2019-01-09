@@ -62,6 +62,22 @@ class Headline extends Controller{
             }
         }
     }
+    public function headlineList(){ //根据分类查头条列表
+        if(empty(request('keyWord'))){
+            $input=request()->input('id');
+            $res=Db::table('headline')->where('type',$input)->orderBy('date','DESC')->orderBy('time','DESC')->paginate(10);
+        }else{
+            $keyWord=request('keyWord');
+            $res=DB::table('headline')->where('title','like',$keyWord.'%')->orderBy('date','DESC')->orderBy('time','DESC')->paginate(20);
+        }
+        return $res;
+    }
+    public function headlineLi(){
+        $input=request()->input('id');
+        $li=Db::table('headline')->where('id',$input)->first();
+        $li->typeName=Db::table('headline_type')->where('id',$li->type)->value('typeName');
+        return json_encode($li);
+    }
     public function delHeadline(){  //删除头条
         $input=request()->input('id');
         $headline=Db::table('headline')->where('id',$input)->first();
