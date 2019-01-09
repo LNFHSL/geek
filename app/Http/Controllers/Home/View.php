@@ -45,7 +45,7 @@ class View extends Controller
             break;
             // 获取头条
             case 'getHeadTiao':
-                 $getHeadTiao = DB::table('head_tiao')->get();
+                 $getHeadTiao = DB::table('headline')->orderBy('date','DESC')->orderBy('time','DESC')->limit(5)->get();
                  echo $getHeadTiao;
             break;
             // 获取轮播

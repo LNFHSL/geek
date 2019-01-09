@@ -230,8 +230,8 @@ class Baby extends Controller
         DB::table("baby_card")->insert([
             'id' => $id,
             'uid' => $input['uid'],
-            'name' => request('name')
-            // 'headpic' => request('headpic'),
+            'name' => request('name'),
+            'headpic' => request('headpic'),
         ]);
         return response()->json(['msg' => '添加成功', 'code' => 200]);
 
