@@ -62,6 +62,12 @@ Route::post('notice/addNoticeType','Notice@addNoticeType');
 Route::post('notice/delNoticeType','Notice@delNoticeType');
 //通告查询
 Route::post('notice/noticeShow','Notice@noticeShow');
+//通告审核状态修改
+Route::post('notice/changeStatus','Notice@changeStatus');
+//查看通告的报名详情
+Route::post('notice/showJoinBaby','Notice@showJoinBaby');
+//删除通告
+Route::post('notice/delNotice','Notice@delNotice');
 
 //已验证萌娃查询
 Route::post('baby/babyShow','Baby@babyShow');

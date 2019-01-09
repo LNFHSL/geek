@@ -106,7 +106,7 @@ class Headline extends Controller{
         $list=Db::table('headline_type')->where('type',$id)->get();
         return $list;
     }
-    public function addHeadlineType(){
+    public function addHeadlineType(){  //添加头条分类
         $t=request()->input('type');
         $typeName=request()->input('typeName');
         if(empty($t)){
