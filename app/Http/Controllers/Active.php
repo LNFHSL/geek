@@ -64,6 +64,31 @@ class Active extends Controller
         $activeObj=DB::table("active_list")->where(['id'=>request('id')])->get();
         return $activeObj;
     }
+    //获取点击活动报名后的信息
+    public function activeReportInfo(){
+        //根据活动id和用户id获得该用户在该活动已报名的萌娃
+        $babyArr=DB::table("active_baoming")->where([ ['uid',request('uid')],['activeid',request('id')] ])->select('babyid')->get();
+        //活动信息及用户所有萌娃
+        $info=DB::table("active_list")->where('id',request('id'))->select('start_time','end_time','place','money as sprice')->first();
+        
+        $info->starArr=DB::table("baby_info")->where('uid',request('uid'))->select('id','headpic','name')->get();
+        foreach($info->starArr as $key => $value){  //[ {id:1},{id:2} ]  所有
+            foreach($babyArr as $k => $val){        //[ {babyid:1} ]     已报名
+                if($value->id == $val->babyid){
+                    unset( $info->starArr[$key] );   
+                };
+            };
+        };
+        return response()->json($info);
+    }
+    //保存活动已报名的萌娃
+    public function addActiveBaby(){
+        foreach (request('babyid') as $key => $value) {
+            DB::table('active_baoming')->insert([
+                'babyid'=>$value['id'],'babyname'=>$value['name'],'uid'=>request('uid'),'activeid'=>request('activeid'),'connactName'=>request('connactName'),'connact'=>request('connact')
+            ]);
+        };
+    }
 
     public function lists()
     {
