@@ -62,6 +62,12 @@ Route::post('notice/addNoticeType','Notice@addNoticeType');
 Route::post('notice/delNoticeType','Notice@delNoticeType');
 //通告查询
 Route::post('notice/noticeShow','Notice@noticeShow');
+//通告审核状态修改
+Route::post('notice/changeStatus','Notice@changeStatus');
+//查看通告的报名详情
+Route::post('notice/showJoinBaby','Notice@showJoinBaby');
+//删除通告
+Route::post('notice/delNotice','Notice@delNotice');
 
 //已验证萌娃查询
 Route::post('baby/babyShow','Baby@babyShow');
@@ -115,13 +121,13 @@ Route::post('active/view','Active@view');
 
 Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
 Route::post('shop/getFilterGoods','Shop@getFilterGoods'); //商品详情
+Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
 	
 Route::get('weixin/gethasopen','Weixin@gethasopen');
-	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名

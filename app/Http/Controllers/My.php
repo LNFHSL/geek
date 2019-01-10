@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Support\Facades\Storage;
 
+use zgldh\QiniuStorage\QiniuStorage;
 class My extends Controller{
 	   public $user = null;
 	    function __CONSTRUCT(){
@@ -109,25 +110,29 @@ class My extends Controller{
 	
 	 public function uploadJoinPic(Request $request){   //上传图片  通用
 	    
-           $file = $request->file('file');
-        // 文件是否上传成功
-      
-        if ($file->isValid()) {
+		$path  = '没有文件';
+		// 判断是否有文件上传
+		if ($request->hasFile('file')) {
+		   // 获取文件,file对应的是前端表单上传input的name
+		   $file = $request->file('file');
+		   // Laravel5.3中多了一个写法
+		   // $file = $request->file;
 
-            // 获取文件相关信息
-            $originalName = $file->getClientOriginalName(); // 文件原名
-            $ext = $file->getClientOriginalExtension();     // 扩展名
-            $realPath = $file->getRealPath();   //临时文件的绝对路径
-            $type = $file->getClientMimeType();     // image/jpeg
+		   // 初始化
+		   $disk = QiniuStorage::disk('qiniu');
+		   // 重命名文件
+		   $fileName = md5($file->getClientOriginalName().time().rand()).'.'.$file->getClientOriginalExtension();
 
-            // 上传文件
-            $filename = date('Y-m-d-H-i-s') . '-' . uniqid() . '.' . $ext;
-            // 使用我们新建的uploads本地存储空间（目录）
-            //这里的uploads是配置文件的名称
-            $bool = Storage::disk('uploads')->put($filename, file_get_contents($realPath));
-            $path ='/uploads/'.$filename;
-            return ['url'=>$path];
-       }
+		   // 上传到七牛
+		   $bool = $disk->put('iwanli/image_'.$fileName,file_get_contents($file->getRealPath()));
+		   // 判断是否上传成功
+		   if ($bool) {
+			   $path = $disk->downloadUrl('iwanli/image_'.$fileName);
+		   }else{
+				return '上传失败';
+		   }
+	   }
+	   return ['url' => $path];
 	 }
 	  public function myJoin(){  //加盟
 	      $uid=$this->user['id'];
@@ -171,7 +176,7 @@ class My extends Controller{
 		db::table('pay_record')->where('uid',$uid)->update(['tips'=>'1']);
     }
 	
-	public function open_member(){ \    //开通vip
+	public function open_member(){     //开通vip
 		$vip_type=request('vip_type'); 
 		$uid=$this->user['id'];
 		$date=date();
@@ -236,6 +241,66 @@ class My extends Controller{
 		$res = DB::table("users")->where("id",$this->user['id'])
 		->first(["image as userpic","username","score as scroll"]);
 		echo json_encode($res);
+	}
+
+	public function activity_tips()
+	{
+		
+	}
+	public function collection()
+	{
+		$res = [];
+		if (request('type') == 'notice') {
+			$res = DB::table("collection")
+			->where("collection.type","notice")
+			->where("collection.uid",$this->user['id'])
+			->join("notice_list","collection.contentid","=","notice_list.id")
+			->get();
+		}elseif (request('type') == 'active') {
+			$tres = DB::table("collection")
+			->where("collection.type","active")
+			->where("collection.uid",$this->user['id'])
+			->join("active_list","collection.contentid","=","active_list.id")
+			->get();
+			$res = [];
+			foreach ($tres as $key => $value) {
+				$value->activeLink = "";
+				$value->activeUrl = $value->thumb;
+				$value->activeTitle = $value->title;
+				$value->activeSprice = $value->money;
+				$value->activeDiqu = $value->place;
+				$value->activeTime = $value->time;
+				$res[] =$value;
+			}
+		}elseif (request('type') == 'baby') {
+			$tres = DB::table("collection")
+			->where("collection.type","baby")
+			->where("collection.uid",$this->user['id'])
+			->join("baby_info","collection.contentid","=","baby_info.id")
+			->get();
+			$res = [];
+			foreach ($tres as $key => $value) {
+				$value->isCollect = 1;
+				$res[] =$value;
+			}
+			 
+		}elseif (request('type') == 'product') {
+			$tres = DB::table("collection")
+			->where("collection.type","product")
+			->where("collection.uid",$this->user['id'])
+			->join("goods","collection.contentid","=","goods.id")
+			->get();
+			$res = [];
+			foreach ($tres as $key => $value) {
+				$value->pic = $value->image;
+				$value->title = $value->name;
+				$value->score = $value->integral;
+				$res[] =$value;
+			}
+			 
+		}	
+		return $res;
+		 
 	}
  }
 ?>

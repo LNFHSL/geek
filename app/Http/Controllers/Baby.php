@@ -9,6 +9,7 @@ use App\User;
 use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use zgldh\QiniuStorage\QiniuStorage;
 /**
  * 萌娃接口类
  */
@@ -22,7 +23,7 @@ class Baby extends Controller
         $this->user = Auth::user();
     }
     // 上传头像
-    public function uploadheadpic(Request $request)
+    public function olduploadheadpic(Request $request)
     {
         $file = $request->file('file');
         // 文件是否上传成功
@@ -44,6 +45,36 @@ class Baby extends Controller
 
         }
     }
+
+    public function uploadheadpic(Request $request) {
+        $path  = '没有文件';
+         // 判断是否有文件上传
+         if ($request->hasFile('file')) {
+            // 获取文件,file对应的是前端表单上传input的name
+            $file = $request->file('file');
+            // Laravel5.3中多了一个写法
+            // $file = $request->file;
+ 
+            // 初始化
+            $disk = QiniuStorage::disk('qiniu');
+            // 重命名文件
+            $fileName = md5($file->getClientOriginalName().time().rand()).'.'.$file->getClientOriginalExtension();
+ 
+            // 上传到七牛
+            $bool = $disk->put('iwanli/image_'.$fileName,file_get_contents($file->getRealPath()));
+            // 判断是否上传成功
+            if ($bool) {
+                $path = $disk->downloadUrl('iwanli/image_'.$fileName);
+            }else{
+                return '上传失败';
+
+            }
+        }
+        return ['url' => $path];
+    	 
+    	
+    }
+    
 
     // 萌娃卡片
     public function getBabyCard()
@@ -181,19 +212,26 @@ class Baby extends Controller
         $file = $request->file('file');
         // 文件是否上传成功
         if ($file->isValid()) {
-
-            // 获取文件相关信息
-            $originalName = $file->getClientOriginalName(); // 文件原名
-            $ext = $file->getClientOriginalExtension();     // 扩展名
-            $realPath = $file->getRealPath();   //临时文件的绝对路径
-            $type = $file->getClientMimeType();     // image/jpeg
-
-            // 上传文件
-            $filename = date('Y-m-d-H-i-s') . '-' . uniqid() . '.' . $ext;
-            // 使用我们新建的uploads本地存储空间（目录）
-            //这里的uploads是配置文件的名称
-            $bool = Storage::disk('uploads')->put($filename, file_get_contents($realPath));
-            $path = '/uploads/' . $filename;
+               // 获取文件,file对应的是前端表单上传input的name
+               $file = $request->file('file');
+               // Laravel5.3中多了一个写法
+               // $file = $request->file;
+    
+               // 初始化
+               $disk = QiniuStorage::disk('qiniu');
+               // 重命名文件
+               $fileName = md5($file->getClientOriginalName().time().rand()).'.'.$file->getClientOriginalExtension();
+    
+               // 上传到七牛
+               $bool = $disk->put('iwanli/image_'.$fileName,file_get_contents($file->getRealPath()));
+               // 判断是否上传成功
+               if ($bool) {
+                   $path = $disk->downloadUrl('iwanli/image_'.$fileName);
+               }else{
+                   return '上传失败';
+   
+               }
+           
             if (request('type') != 'cardmod') {
                 DB::table('baby_card')->where("id", request('babyid'))->increment('images');
             } else {
@@ -255,7 +293,7 @@ class Baby extends Controller
         $babyid = request('babyid');
         $bianhao = request('bianhao');
         $rtn['bianhao'] = $bianhao;
-        $rtn['txt'] = DB::table("baby_info")->where("uid", $babyid)->first();
+        $rtn['txt'] = DB::table("baby_info")->where("id", $babyid)->first();
         $card_a = DB::table("baby_uploadimage")
             ->where("babyid", $babyid)
             ->where("cardmode", $bianhao)
