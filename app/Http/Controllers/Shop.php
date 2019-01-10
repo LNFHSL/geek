@@ -15,9 +15,13 @@ class Shop extends Controller{
 	    }
 		 //我的积分在my文件里
 		public function getGoods(){  //全部商品
-		     $user=Auth::user();
-		    $list_score=db::table('users')->where('id',$user['id'])->value('score');
-			$list_shopMyGoods=db::table('goods')->where('integral', '<=',$list_score)->get();
+			 $user=Auth::user();
+			 $list_shopMyGoods = [];
+			 if ($user['id']) {
+				$list_score=db::table('users')->where('id',$user['id'])->value('score');
+				$list_shopMyGoods=db::table('goods')->where('integral', '<=',$list_score)->get();
+			 }
+	
 			$list_shopAllGood=db::table('goods')->select('id','name','classify','integral','image')->get();
 			$list_classify=db::table('goods_classify')->get();
 			

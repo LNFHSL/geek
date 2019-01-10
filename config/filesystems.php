@@ -47,7 +47,18 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
-
+        'qiniu' => [
+            'driver'  => 'qiniu',
+            'domains' => [
+                'default'   => 'qiniu.geekyiqi.com', //你的七牛域名
+                'https'     => 'qiniu.geekyiqi.com',         //你的HTTPS域名
+                'custom'    => 'qiniu.geekyiqi.com',     //你的自定义域名
+             ],
+            'access_key'=> '1FsD0UN5u5zofw3SXErL7sWA3yEJnaZUAuOqMnKE',  //AccessKey
+            'secret_key'=> 'ePNwrAuaH9wKzAPrr8MoF41Epoj4Z26e4iSBP8c6',  //SecretKey
+            'bucket'    => 'geekyiqi',  //Bucket名字
+            'notify_url'=> '',  //持久化处理回调地址
+        ],
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

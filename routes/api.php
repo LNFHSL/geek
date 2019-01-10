@@ -115,13 +115,13 @@ Route::post('active/view','Active@view');
 
 Route::post('shop/goodsDetail','Shop@goodsDetail'); //商品详情
 Route::post('shop/getFilterGoods','Shop@getFilterGoods'); //商品详情
+Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
 	
 Route::get('weixin/gethasopen','Weixin@gethasopen');
-	Route::post('shop/getGoods','Shop@getGoods');  //查询商品 且查询我能买的商品
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名

@@ -62,9 +62,9 @@ class Users extends Controller{
 		else{
 	 	$sendUrl = 'http://v.juhe.cn/sms/send'; //短信接口的URL
 		$smsConf = array(
-		    'key'       => 'd6921e49c1a453c0785c532d2c911deb', //您申请的APPKEY
+		    'key'       => '57d4f1399f4dd473a276f6967ea44801', //您申请的APPKEY
 		    'mobile'    => $mobile , //接受短信的用户手机号码
-		    'tpl_id'    => '124906', //您申请的短信模板ID，根据实际情况修改
+		    'tpl_id'    => '129172', //您申请的短信模板ID，根据实际情况修改
 		    'tpl_value' =>'#code#='.$rand.'&#company#=极客艺起' //您设置的模板变量，根据实际情况修改
 		);
 		$list_two=db::table('validcode')->where('mobile', $mobile)->get();
