@@ -85,8 +85,57 @@ class Notice extends Controller{
         }
     }
     public function noticeShow(){   //通告列表
+        $status=request()->input('status');
+        if(!empty($status)){
+            $list=Db::table('notice_list')->where('status',$status)->paginate(10);
+            return $list;
+        }
         $list=Db::table('notice_list')->paginate(10);
         return $list;
+    }
+    public function changeStatus(){ //修改通告审核状态
+        $id=request()->input('id');
+        $status=request()->input('status');
+        $res=Db::table('notice_list')->where('id',$id)->update(['status'=>$status]);
+        if($res){
+            return ['state'=>1];
+        }else{
+            return ['state'=>0];
+        }
+    }
+    public function showJoinBaby(){ //查看通告的报名详情
+        $id=request()->input('id');
+        $list=Db::table('notice_baoming')->where('noticeid',$id)->get();
+        $n=0;
+        foreach($list as $val){
+            $baby=Db::table('baby_info')->where('id',$val->babyid)->first();
+            $msg[$n]['id']=$baby->id;
+            $msg[$n]['headpic']=$baby->headpic;
+            $msg[$n]['sex']=$baby->sex;
+            $msg[$n]['name']=$baby->name;
+            $msg[$n]['contacts']=$val->contacts;
+            $msg[$n]['contactmode']=$val->contactmode;
+            $n++;
+        }
+        if(!empty($msg)){
+            return $msg;
+        }else{
+            return '';
+        }
+    }
+    public function delNotice(){    //删除通告
+        $id=request()->input('id');
+        $msg=DB::table('notice_list')->where('id',$id)->first();
+        if(!empty($msg->thumb)){
+            $imgUrl=str_replace('\\','/',base_path().'/public'.$msg->thumb);
+            unlink($imgUrl);
+        }
+        $res=Db::table('notice_list')->where('id',$id)->delete();
+        if($res){
+            return ['state'=>1];
+        }else{
+            return ['state'=>0];
+        }
     }
 }
 	
