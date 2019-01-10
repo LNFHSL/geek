@@ -31,6 +31,7 @@ Route::any('user/juhecurl','Users@juhecurl');
 Route::post('baby/uploadheadpic', 'Baby@uploadheadpic');  //头像	
 Route::post('baby/uploadimage', 'Baby@uploadimage'); //没头像	
 Route::post('baby/getCardModel', 'Baby@getCardModel');  
+Route::any('headline/headlineLi', 'Home\View@showTt');  
 
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');

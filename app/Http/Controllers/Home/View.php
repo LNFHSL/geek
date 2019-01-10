@@ -21,6 +21,14 @@ class View extends Controller
        
        
      }
+     
+     public function showTt()
+     {
+          $input=request()->input('id');
+          $li=Db::table('headline')->where('id',$input)->first();
+          $li->typeName=Db::table('headline_type')->where('id',$li->type)->value('typeName');
+          return json_encode($li);
+     }
 // 数据库更新
      function SQLUpdate($who){
          
@@ -31,6 +39,12 @@ class View extends Controller
          
        
      }
+     public function headlineLi(){
+          $input=request()->input('id');
+          $li=Db::table('headline')->where('id',$input)->first();
+          $li->typeName=Db::table('headline_type')->where('id',$li->type)->value('typeName');
+          return json_encode($li);
+      }
 // 数据库查询
      function SQLSelect($who,$where){
          // 参数区别谁调用以便进行不同的查询
