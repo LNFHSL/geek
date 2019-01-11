@@ -20,7 +20,10 @@ class Notice extends Controller{
 		$list=db::table('notice_baoming')
 			->join("notice_list","notice_baoming.noticeid","=","notice_list.id")
 			->join("notice_juese","notice_baoming.nstarid","=","notice_juese.id")
-			->where([['notice_baoming.uid',$uid],['notice_baoming.type',$type]])->get();
+            ->where([['notice_baoming.uid',$uid],['notice_baoming.type',$type]])->get();
+        foreach ($list as $key => $value) {
+            $list[$key]->talk_pay = $value->type;
+        }    
 		return $list;
 	}
 	

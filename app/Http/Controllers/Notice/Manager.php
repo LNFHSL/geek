@@ -27,7 +27,9 @@ class Manager extends Controller{
         
         // 计算截止还有多少天
         $input['time'] = round(( strtotime($input['endtime']) - $input['createtime']) / 86400);
-        
+        if($input['time']<=0){
+            $input['time'] = '0';
+        }
         $juese_list =  $input['juese_list'];
         unset($input['juese_list']);
         unset($input['edit_id']);
@@ -93,7 +95,11 @@ class Manager extends Controller{
         
         // 计算截止还有多少天
         $input['time'] = round(( strtotime($input['endtime']) - $input['createtime']) / 86400);
-     
+        if($input['time']<=0){
+            $input['time'] = '0';
+        }
+        
+        $input['status'] = 1;
         $juese_list =  $input['juese_list'];
         unset($input['juese_list']);
         unset($input['id']);
@@ -141,7 +147,9 @@ class Manager extends Controller{
             ->where($w_str)
             ->orderby("id","desc")
             ->get();
-           
+            foreach ($list as $key => $value) {
+                $list[$key]->people=DB::table('notice_baoming')->where(['noticeid'=>$value->id])->count();
+          }   
 		return $list;
 	}
    
