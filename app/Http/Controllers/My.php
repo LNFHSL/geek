@@ -250,6 +250,7 @@ class My extends Controller{
 	{
 		
 	}
+	
 	public function collection()
 	{
 		$res = [];
@@ -307,6 +308,16 @@ class My extends Controller{
 		}	
 		return $res;
 		 
+	}
+    public function vip(){
+		$list=db::table('vip')->where('state',1)->get();
+		return $list;
+	}
+	public function user_type(){
+		$uid=$this->user['id'];
+		$list=db::table('users')->where('id',$uid)->value('type');
+		return $list;
+
 	}
  }
 ?>

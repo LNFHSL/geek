@@ -140,6 +140,20 @@ class Notice extends Controller{
             return ['state'=>0];
         }
     }
+	public function report(){ //通告举报
+		$input=request()->all();
+		$uid=$this->user['id'];
+		$input['report_id']=$uid;
+		$input['time']=time();
+		$input['title']=json_encode($input['title']);
+		$list=db::table('report')->insert($input);
+		if($list){
+			return 1;
+		}else{
+			return 2;
+		}
+	}
+	
 }
 	
 ?>
