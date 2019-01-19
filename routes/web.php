@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 |
 */
 
+//登录
+Route::any('login/index','Login@login_ht');
+Route::any('user/info','Login@info');
 Route::get('/', function () {
     return view('c');
 });
