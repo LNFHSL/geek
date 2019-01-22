@@ -1,5 +1,5 @@
 <?php
-namespace App\http\Controllers;
+namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -15,17 +15,19 @@ class Geek_goods extends Controller{
 	}
 	public function add_goods(){ //添加商品
 		$input=request()->all();
-		$input['date']=time();
-		$list=db::table('goods')->insert($input);
-		if($list){
-			return (['state'=>1]);
-		}else{
-			return (['state'=>0]);
+		if(request()->all()!= '' && request()->all() != null){
+			$input['date']=time();
+			$list=db::table('goods')->insert($input);
+			if($list){
+				return (['state'=>1]);
+			}else{
+				return (['state'=>0]);
+		    }
 		}
 	}	
 	 public function display_goods(){   //商品
 	 	$list=db::table('goods')->join('goods_classify','goods.classify','goods_classify.id')
-	 	  ->select('goods.*', 'goods_classify.classify')->get();
+	 	  ->select('goods.*', 'goods_classify.classify')->paginate(5);
 		foreach($list as $key=>$value){
 	  	 $list[$key]->date = date('Y-m-d',$value->date);
 	     }
@@ -33,10 +35,10 @@ class Geek_goods extends Controller{
 	 }
 	 public function delete_goods(){  //删除商品
 	 	$id=request('id');
-		$list_img=db::table('goods')->where('id',$id)->value('image');
-		$path = public_path();
+//		$list_img=db::table('goods')->where('id',$id)->value('image');
+//		$path = public_path();
 		$list=db::table('goods')->where('id',$id)->delete();
-		unlink ($path.$list_img);
+//		unlink ($path.$list_img);
 		if($list){
 			return '1';
 		}else{
@@ -66,7 +68,9 @@ class Geek_goods extends Controller{
 	 }
 	 public function add_classify(){   //添加分类
 	    $input=request('input');
+		if($input != '' && $input !=null){
 	    db::table('goods_classify')->insert(['classify'=>$input]); 
+		}
 	 }
 	 public function delete_classify(){  //删除分类
 	 	  $id=request('id');
@@ -85,10 +89,12 @@ class Geek_goods extends Controller{
 		 $list=db::table('goods')->where('id',$id)->get();
 		 return $list;
 	}
-	public function up_goods(){ //添加商品
+	public function up_goods(){ //修改商品
+		$id=request('id');
 		$input=request()->all();
+		unset($input['id']);
 		$input['date']=time();
-		$list=db::table('goods')->update($input);
+		$list=db::table('goods')->where('id',$id)->update($input);
 		if($list){
 			return (['state'=>1]);
 		}else{

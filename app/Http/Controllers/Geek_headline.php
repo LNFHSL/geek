@@ -72,22 +72,21 @@ class Headline extends Controller{
         }
     }
     public function changeHeadline(){   //修改头条
+        $id=request('id');
         $input=request()->all();
-        $res=Db::table('headline')->where('id',$input['id'])
-            ->update(['title'=>$input['title'],
-                'content'=>$input['content'],
-                'date'=>$input['date'],
-                'time'=>$input['time'],
-                'type'=>$input['type']
-            ]);
-        if($res){
+        unset( $input['id']);
+        // print_r($input);exit();
+        $res=Db::table('headline')->where('id',$id)
+            ->update($input);
+           
+        if($res==1){
             return ['state'=>'1'];
         }else{
             return ['state'=>'0'];
         }
     }
     public function headlinePage(){ //头条分页
-        $headline = DB::table('headline')->paginate(10);
+        $headline = DB::table('headline')->paginate(5);
         return $headline;
     }
     public function headlineTypePage(){ //分类

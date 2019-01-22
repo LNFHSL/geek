@@ -45,7 +45,7 @@ class View extends Controller{
     		break;
     		// 热门通告数据库获取
     		case 'geHotNotice':
-    			  $geHotNotice = DB::table('notice_list')->get();
+    			  $geHotNotice = DB::table('notice_list')->where("status",">",1)->get();
                   echo $geHotNotice;
     		break;
     		   
@@ -68,7 +68,7 @@ class View extends Controller{
        foreach ($juese_l as $key => $value) {
               $trtn_a['starname']  = '角色名'.(++$key) ;
               $trtn_a['babys'] = DB::table('notice_baoming')
-                     ->join("baby_info","notice_baoming.babyid","=","baby_info.uid")
+                     ->join("baby_info","notice_baoming.babyid","=","baby_info.id")
                      ->where(['nstarid'=>$value->id,'noticeid'=>request('noticeid')])
                      ->get();
               $rtn_a[]=$trtn_a;
@@ -120,7 +120,9 @@ class View extends Controller{
               ->orderby("id","desc")
               ->get(); 
        }
-             
+       foreach ($notice_list as $key => $value) {
+              $notice_list[$key]->people=DB::table('notice_baoming')->where(['noticeid'=>$value->id])->count();
+        }       
       
     	return json_encode($notice_list);
     }
@@ -235,7 +237,10 @@ class View extends Controller{
     }
     // 获取热门公告
     public function geHotNotice(){
-        $geHotNotice = DB::table('notice_list')->orderBy("id","desc")->get();
+        $geHotNotice = DB::table('notice_list')->where("status",">",1)->orderBy("id","desc")->get();
+        foreach ($geHotNotice as $key => $value) {
+              $geHotNotice[$key]->people=DB::table('notice_baoming')->where(['noticeid'=>$value->id])->count();
+        }
         return $geHotNotice;
     }
     // 获取通告详情
@@ -259,8 +264,11 @@ class View extends Controller{
               $value->type =  $getNoticeDetail->type;
               $getNoticeDetail->job[]=$value;
        }
-
-       $getNoticeDetail->babys = [];
+      
+       $getNoticeDetail->babys =  DB::table("notice_baoming")
+              ->join("baby_info","baby_info.id","=","notice_baoming.babyid")
+              ->where(['noticeid'=>request('id')])
+              ->get(["headpic"]);
        $getNoticeDetail->isPart = false;
        $getNoticeDetail->isCollection = false;
        
@@ -290,27 +298,28 @@ class View extends Controller{
     }
     // 报名
     public function signUp(){
-       if (request('babyid')=='') {
-              return ['msg'=>'请先选择萌娃！'];
+       $user=Auth::user();
+       $baby_info = DB::table('baby_info')->where("uid", $user['id'])->first();
+       if ($baby_info->id=='') {
+              return ['msg'=>'你还没有萌娃！'];
        }else{
               $c = DB::table("notice_baoming")->where(
                             ['babyid'=>request('babyid'),'nstarid'=>request('nstarid')]
                      )->count();
               if ($c>0) {
                      return ['msg'=>'你已经报过名了！'];exit();
-              }
-              $user=Auth::user();
+              } 
               $score = DB::table("notice_juese")
               ->where(['notice_id'=>request('noticeid')])
               ->where(['id'=>request('nstarid')])
               ->value("score"); 
               DB::table("notice_baoming")->insert(
-                     ['babyid'=>request('babyid'),'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode'),'uid'=> $user['id']]
+                     ['babyid'=>$baby_info->id,'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode'),'uid'=> $user['id']]
               );
 
-              DB::table("notice_list")
-                     ->where(['id'=>request('noticeid')])
-                     ->increment("people");
+              // DB::table("notice_list")
+              //        ->where(['id'=>request('noticeid')])
+              //        ->increment("people");
               // 赠送积分
               DB::table("users")
                      ->where(['id'=>$user['id']])

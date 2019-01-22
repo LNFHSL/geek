@@ -237,9 +237,12 @@ class My extends Controller{
 			->update($w_str);
 	}
 	public function getUserInfo()
-	{
+	{ 
 		$res = DB::table("users")->where("id",$this->user['id'])
-		->first(["image as userpic","username","score as scroll"]);
+		->first(["image as userpic","username","score as scroll","type","unreads","openid"]);
+		
+		$res->token =$this->user->createToken('MyApp')->accessToken;
+		
 		echo json_encode($res);
 	}
 
@@ -247,6 +250,7 @@ class My extends Controller{
 	{
 		
 	}
+	
 	public function collection()
 	{
 		$res = [];
@@ -256,6 +260,9 @@ class My extends Controller{
 			->where("collection.uid",$this->user['id'])
 			->join("notice_list","collection.contentid","=","notice_list.id")
 			->get();
+			foreach ($res as $key => $value) {
+				$res[$key]->people=DB::table('notice_baoming')->where(['noticeid'=>$value->id])->count();
+		  }       
 		}elseif (request('type') == 'active') {
 			$tres = DB::table("collection")
 			->where("collection.type","active")
@@ -301,6 +308,16 @@ class My extends Controller{
 		}	
 		return $res;
 		 
+	}
+    public function vip(){
+		$list=db::table('vip')->where('state',1)->get();
+		return $list;
+	}
+	public function user_type(){
+		$uid=$this->user['id'];
+		$list=db::table('users')->where('id',$uid)->value('type');
+		return $list;
+
 	}
  }
 ?>

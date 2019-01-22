@@ -1,5 +1,5 @@
 <?php
-namespace App\http\Controllers;
+namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -26,9 +26,10 @@ class Geek_qt extends Controller{
 		$state=request('state');
 		$type=request('type');
 		$list_user=db::table('users')->where('id',$uid)->update(['type'=>$type]);
-		if($list_user){
+		if($list_user==1){
 		$list=db::table('league')->where('id',$id)->update(['state'=>$state]);
-		if($list){
+
+		if($list==1){
 			return 1;
 		}else{
 			return 2;
@@ -47,7 +48,7 @@ class Geek_qt extends Controller{
 	public function wait_complete(){  //审核完成   
 	   $list=db::table('league')
 	   ->where('state',">",0)->select('id','shopname','contacter','contacttel','students','date','state')
-	   ->get();
+	   ->paginate(7);
 	   foreach($list as $key=>$value){
 	  	 $list[$key]->date = date('Y-m-d',$value->date);
 	     }
@@ -77,28 +78,6 @@ class Geek_qt extends Controller{
 			return 1;
 		}
 	}
-	public function send_slide(){ //上传幻灯片
-		$time=time();
-		$list=db::table('slide_img')->insert([
-		'img'=>request('img'),
-		'route'=>request('route'),
-		 'date'=>$time
-		]);
-	}
-	public function display_slide(){ //幻灯片
-	    $list=db::table('slide_img')->orderBy('id','desc')->get();
-		foreach($list as $key=>$value){
-			$list[$key]->date=date('Y-m-d',$value->date);
-		}
-		return $list;
-	}
-	public function delete_slide(){ //删除幻灯片
-		$id=request('id');
-		$list_img=db::table('slide_img')->where('id',$id)->value('img');
-		$path = public_path();
-		$list=db::table('slide_img')->where('id',$id)->delete();
-		unlink ($path.$list_img);
-	}
 	public function feedback(){ //反馈
 		$list=db::table('opinion')->orderBy('id','desc')->get();
 		return $list;
@@ -111,9 +90,13 @@ class Geek_qt extends Controller{
 		return $list;
 	}
 	public function meng_wa_wc(){ //已认证或者未通过
-		$list=db::table('baby_info')->orderBy('id','desc')->where('isAuth',">=",1)->get();
+		$list=db::table('baby_info')->orderBy('id','desc')->where('isAuth',">=",1)->paginate(5);
 		return $list;
 	}
+	
+	
+	
+	
 	public function meng_wa_rz(){ //萌娃认证
 		$id=request('id');
 		$state=request('state');
@@ -133,27 +116,6 @@ class Geek_qt extends Controller{
 	}
 	public function meng_wa_search(){//萌娃搜索
 		$list=db::table('baby_info')->where('name',request('name'))->get();
-		return $list;
-	}
-	public function vip(){ //添加vip
-		$input=request()->all();
-		$list=db::table('vip')->insert($input);
-	}
-	public function display_vip(){ //查询显示vip
-		$list=db::table('vip')->get();
-		return $list;
-	}
-	public function delete_vip(){ //删除vip
-	    $list=db::table('vip')->where('id', request('id'))->delete();
-		if($list){
-			return 1;
-		}else{
-			return 2;
-		}
-		
-	}
-	public function display_user(){
-		$list=db::table('users')->where('member','>',0)->select('member','username')->get();
 		return $list;
 	}
 	

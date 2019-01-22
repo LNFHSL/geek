@@ -31,6 +31,7 @@ Route::any('user/juhecurl','Users@juhecurl');
 Route::post('baby/uploadheadpic', 'Baby@uploadheadpic');  //头像	
 Route::post('baby/uploadimage', 'Baby@uploadimage'); //没头像	
 Route::post('baby/getCardModel', 'Baby@getCardModel');  
+Route::any('headline/headlineLi', 'Home\View@showTt');  
 
 
 Route::post('user/uploadJoinPic','My@uploadJoinPic');
@@ -41,14 +42,14 @@ Route::get('weixin/getopenid','Weixin@getopenid');
 Route::any('weixin/pay_code','Weixin@pay_code');
 
 //后台管理系统 商品
-Route::post('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
+Route::any('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
 	return $index->$action();
 	});
 	
 //后台管理系统 审核加盟	
 Route::any('notice/noticeTypeShow','Notice@noticeTypeShow');
 
-Route::any('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
+Route::post('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $action){
 	return $index->$action();
 });
 		
@@ -56,6 +57,22 @@ Route::any('geek_qt/{action}', function(App\Http\Controllers\Geek_qt $index, $ac
 Route::post('headline/{action}', function(App\Http\Controllers\Headline $index, $action){
     return $index->$action();
 });
+
+//后台 设置
+Route::post('geek_set/{action}', function(App\Http\Controllers\Geek_set $index, $action){
+    return $index->$action();
+});
+
+//后台 通告
+Route::post('geek_notice/{action}', function(App\Http\Controllers\Geek_notice $index, $action){
+    return $index->$action();
+});
+
+//后台 首页推荐
+Route::post('geek_home/{action}', function(App\Http\Controllers\Geek_home $index, $action){
+    return $index->$action();
+});
+
 
 //通告类型增加和删除
 Route::post('notice/addNoticeType','Notice@addNoticeType');
@@ -133,6 +150,7 @@ Route::get('weixin/gethasopen','Weixin@gethasopen');
 	//报名
 	Route::post('notice/signUp','Notice\View@signUp');
 	Route::post('weixin/pay/ggg','Weixin@pay');
+
 	Route::post('user/{action}', function(App\Http\Controllers\My $index, $action){
 	return $index->$action();
 	});
