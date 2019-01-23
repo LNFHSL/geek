@@ -108,6 +108,50 @@ class Geek_notice extends Controller{
 	    }
 		
 	}
+
+	public function an_classify(){
+		$nav_list = DB::table('nav_cate')->get();
+		$rtn_data_a = [];
+		foreach ($nav_list as $key => $value) {
+		if ($value->parent_id>0) {
+		//子分类
+		$rtn_data_a[$value->parent_id]->children[] = $value;
+		}else{
+		// 一级分类：活动、通告
+		$rtn_data_a[$value->id] = $value;
+		}
+		}
+		return array_values($rtn_data_a);
+	}
+	public function add_notice(){
+		$role=request('role');
+		$input=request()->all();
+		$input['createtime']=time();
+		$input['is_pay']='1';
+		$input['uid']='0';
+		unset($input['role']);
+		$list_id=db::table('notice_list')->insertGetId($input);
+
+		if($list_id != ''){
+			
+			foreach($role as $value){
+				$value['notice_id'] =$list_id;
+				$value['allAge'] = $value['age']['allAge'];
+				$value['ageStar'] = $value['age']['ageStar'];
+				$value['ageEnd'] = $value['age']['ageEnd'];
+				$value['allHeight'] = $value['heigh']['allHeigh'];
+				$value['heightEnd'] = $value['heigh']['heighEnd'];
+				$value['heightStar'] = $value['heigh']['heighStar'];
+				$value['price'] = $value['money2'];
+				unset($value['age']);
+				unset($value['money2']);
+				unset($value['heigh']);
+				db::table('notice_juese')->insert($value);
+			}
+			return 1;
+		}
+		
+	}
 	
 	
 }
