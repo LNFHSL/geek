@@ -302,24 +302,24 @@ class Baby extends Controller
         foreach ($card_a as $key => $value) {
             if ($value->index == 1) {
                 $rtn['image1']['id'] = $value->id;
-                $rtn['image1']['url'] = $value->file;
+                $rtn['image1']['url'] = base64EncodeImage($value->file);
             } elseif ($value->index == 2) {
                 $rtn['image2']['id'] = $value->id;
-                $rtn['image2']['url'] = $value->file;
+                $rtn['image2']['url'] = base64EncodeImage($value->file);
             } elseif ($value->index == 3) {
                 $rtn['image3']['id'] = $value->id;
-                $rtn['image3']['url'] = $value->file;
+                $rtn['image3']['url'] = base64EncodeImage($value->file);
             } elseif ($value->index == 4) {
                 $rtn['image4']['id'] = $value->id;
-                $rtn['image4']['url'] = $value->file;
+                $rtn['image4']['url'] = base64EncodeImage($value->file);
             } elseif ($value->index == 5) {
                 $rtn['image5']['id'] = $value->id;
-                $rtn['image5']['url'] = $value->file;
+                $rtn['image5']['url'] = base64EncodeImage($value->file);
             } elseif ($value->index == 6) {
                 $rtn['image6']['id'] = $value->id;
-                $rtn['image6']['url'] = $value->file;
+                $rtn['image6']['url'] = base64EncodeImage($value->file);
             }
-        }
+        };
         return $rtn;
     }
     public function babyShow(){ //查看已认证萌娃
@@ -342,4 +342,14 @@ class Baby extends Controller
             return ['state'=>0];
         }
     }
-}
+};
+
+
+function base64EncodeImage ($image_file) {
+    $base64_image = '';
+    $imgPath = public_path().str_replace("/","\\",$image_file);
+    $image_info = getimagesize( $imgPath );
+    $image_data = fread(fopen($imgPath, 'r'), filesize($imgPath));
+    $base64_image = 'data:' . $image_info['mime'] . ';base64,' . chunk_split(base64_encode($image_data));
+    return $base64_image;
+};

@@ -44,7 +44,10 @@ class Manager extends Controller{
         if($token)
         {
             $data = DB::select('select * from manager where token = ?',[$token]);
-            return ["code" => 20000,"data"=>["roles" =>[$data[0]->roles],"name" => $data[0]->name,"id" => $data[0]->id, "avatar" => "/src/assets/avatar.gif"]];
+            // admin 超级管理员
+            //  client 客服
+            //  editor 编辑
+            return ["code" => 20000,"data"=>["roles" =>['editor'],"name" => $data[0]->name,"id" => $data[0]->id, "avatar" => "/src/assets/avatar.gif"]];
         }else{
             return ["code" => 50008];
         }
