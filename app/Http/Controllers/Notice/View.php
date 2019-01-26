@@ -314,7 +314,7 @@ class View extends Controller{
               ->where(['id'=>request('nstarid')])
               ->value("score"); 
               DB::table("notice_baoming")->insert(
-                     ['babyid'=>$baby_info->id,'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode'),'uid'=> $user['id']]
+                     ['babyid'=>$baby_info->id,'type'=>request('type'),'noticeid'=>request('noticeid'),'nstarid'=>request('nstarid'),'contacts'=>request('contacts'),'contactmode'=>request('contactmode'),'uid'=> $user['id'],'time'=>time()]
               );
 
               // DB::table("notice_list")

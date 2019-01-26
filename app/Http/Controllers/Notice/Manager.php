@@ -63,7 +63,7 @@ class Manager extends Controller{
     {
         $getNoticeDetail = DB::table('notice_list')->where(['id'=>request('id')])->first();
         $juese_list = DB::table('notice_juese')->where(['notice_id'=>request('id')])->get();
- 
+        
         foreach ($juese_list as $key => $value) { 
             $value->age['allAge'] = $value->allAge>0?true:false;
             $value->age['ageStar'] = $value->ageStar;
