@@ -346,6 +346,7 @@ class Baby extends Controller
 
 
 function base64EncodeImage ($image_file) {
+    return $image_file;
     $base64_image = '';
     $imgPath = public_path().str_replace("/","\\",$image_file);
     $image_info = getimagesize( $imgPath );

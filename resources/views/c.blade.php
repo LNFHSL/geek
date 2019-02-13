@@ -63,7 +63,9 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-           
+        <input type="text" id="yzm">
+        <input type="button" onclick="resg()" value="ss">
+        <img src="{{captcha_src()}}">
             <div class="content">
                 <div class="title m-b-md">
                     Laravel
@@ -81,13 +83,16 @@
         <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 
         <script>
-             $.get("/geeks/public/index.php/api/weixin/getopenid",{
-                email:'332@qq.com',
-                password:'12345',
+        function resg() {
+            $.post("/geek/public/user/login",{
+                captcha:$("#yzm").val(),
+               
             },function (rtn) {
                console.log(rtn)
             })
-           
+          
+        }
+            
         </script>
     </body>
 </html>

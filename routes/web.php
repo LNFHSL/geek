@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 */ 
 Route::post('user/login','Admin\Manager@login');
 Route::post('user/info','Admin\Manager@info');
+
 Route::post('user/logout','Admin\Manager@logout');
 Route::get('/', function () {
     return view('c');

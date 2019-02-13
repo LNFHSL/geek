@@ -6,10 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
-
+use Mews\Captcha\Facades\Captcha;
 class Manager extends Controller{
 	public function login(Request $request)
     {
+        
+        // if(!Captcha::check($request->input('captcha'))){
+        //     return ["code" => 200000,"message" => "验证码不正确"];
+        //     exit();
+        // }
         $username = $request->input('username');
         $password = $request->input('password');
         //$username = $_POST['username'];
