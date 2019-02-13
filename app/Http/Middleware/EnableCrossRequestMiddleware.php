@@ -20,7 +20,8 @@ class EnableCrossRequestMiddleware
         $allow_origin = [
             'http://localhost:8080',
             'http://192.168.1.133:8080',
-            'http://localhost:9528' 
+            'http://localhost:9528',
+            
         ];
         if (in_array($origin, $allow_origin)) {
             $response->header('Access-Control-Allow-Origin', $origin);

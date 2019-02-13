@@ -78,7 +78,7 @@ class Geek_set extends Controller{
 	public function vip_user_query(){  //查询vip用户
 	    if(request('classify')==1){
 		    $list=db::table('users' )->where('member','>',0)->join('vip','vip.id','users.member')
-				->join('vip_time','users.id','vip_time.uid')->where('username',request('input'))
+				->join('vip_time','users.id','vip_time.uid')->where('username','like',"%".request('input')."%")
 				->select('users.username','vip.name','vip_time.time')->paginate(8);
 			foreach($list as $key=>$value){
 		  	 	$list[$key]->time = date('Y-m-d',$value->time);
