@@ -108,7 +108,193 @@ class Geek_notice extends Controller{
 	    }
 		
 	}
-	
+
+	public function an_classify(){
+		$nav_list = DB::table('nav_cate')->get();
+		$rtn_data_a = [];
+		foreach ($nav_list as $key => $value) {
+		if ($value->parent_id>0) {
+		//子分类
+		$rtn_data_a[$value->parent_id]->children[] = $value;
+		}else{
+		// 一级分类：活动、通告
+		$rtn_data_a[$value->id] = $value;
+		}
+		}
+		return array_values($rtn_data_a);
+	}
+	public function add_notice(){
+		$role=request('role');
+		$input=request()->all();
+		$input['createtime']=time();
+		$input['is_pay']='1';
+		$input['uid']='0';
+		$input['endtime']=substr($input['endtime'],0,10);
+		unset($input['role']);
+		$list_id=db::table('notice_list')->insertGetId($input);
+
+		if($list_id != ''){
+			
+			foreach($role as $value){
+				$value['notice_id'] =$list_id;
+				$value['allAge'] = $value['age']['allAge'];
+				$value['ageStar'] = $value['age']['ageStar'];
+				$value['ageEnd'] = $value['age']['ageEnd'];
+				$value['allHeight'] = $value['heigh']['allHeigh'];
+				$value['heightEnd'] = $value['heigh']['heighEnd'];
+				$value['heightStar'] = $value['heigh']['heighStar'];
+				$value['price'] = $value['money2'];
+				unset($value['age']);
+				unset($value['money2']);
+				unset($value['heigh']);
+				db::table('notice_juese')->insert($value);
+			}
+			return 1;
+		}
+		
+	}
+	public function add_activitys(){  //上传官方活动
+		$input=request()->all();
+		$input['start_time']=substr($input['start_time'],0,10);
+		$input['end_time']=substr($input['end_time'],0,10);
+		$input['uid']=0;
+		$input['create_time']=time();
+		$list=db::table('active_list')->insert($input);
+		 return json_encode($list);
+		
+	}
+
+	public function activitys(){  //获取活动列表
+		$list=db::table('active_list')->orderBy('id', 'desc')->paginate(6);
+		return $list;
+		
+	}
+
+	public function query_activitys(){  //查询活动
+		$name=request('name');
+		$list=db::table('active_list')->where('title','like',"%".$name."%")->orderBy('id', 'desc')->get();
+		return $list;
+	}
+
+	public function excel_activitys(){  //导出活动报名excel
+		$qi_date=strtotime(request('value'));
+		$shi_date=strtotime(request('values'));
+
+		if($shi_date==''){
+			$list=db::table('active_baoming')->where('active_baoming.time','>',$qi_date)
+			->join('active_list','active_baoming.activeid','active_list.id')
+			->join('users','active_baoming.uid','users.id')
+			->select('active_baoming.*','active_list.title','users.username','users.mobile')
+			->orderBy('id', 'active_baoming.desc')->get();
+			
+			foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+			
+			return $list;
+		}else if($qi_date==''){
+			$list=db::table('active_baoming')->where('active_baoming.time','<',$shi_date)
+			->join('active_list','active_baoming.activeid','active_list.id')
+			->join('users','active_baoming.uid','users.id')
+			->select('active_baoming.*','active_list.title','users.username','users.mobile')
+			->orderBy('id', 'active_baoming.desc')->get();  
+
+            foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+
+			return $list;
+		}else{
+			$list=db::table('active_baoming')->where([['active_baoming.time','<',$shi_date],['active_baoming.time','>',$qi_date]])
+			->join('active_list','active_baoming.activeid','active_list.id')
+			->join('users','active_baoming.uid','users.id')
+			->select('active_baoming.*','active_list.title','users.username','users.mobile')
+			->orderBy('id', 'active_baoming.desc')->get(); 
+			
+			foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+
+			return $list;
+		}	 
+	}
+	public function enroll(){ 
+
+        $list=db::table('active_baoming')->where('activeid',request('id'))
+			->join('active_list','active_baoming.activeid','active_list.id')
+			->join('users','active_baoming.uid','users.id')
+			->select('active_baoming.*','active_list.title','users.username','users.mobile')
+			->orderBy('id', 'active_baoming.desc')->get(); 
+			
+			foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+
+			return $list;
+
+	}
+	public function searchs(){  //查询通告
+		$input=request('input');
+		$list=db::table('notice_list')->where('title','like',"%".$input."%")->get();
+		return $list;
+	}
+
+
+
+	public function excel_notice(){
+		$qi_date=strtotime(request('value'));
+		$shi_date=strtotime(request('values'));
+
+        if($shi_date==''){
+			$list=db::table('notice_baoming')->where('notice_baoming.time','>',$qi_date)
+			->join('notice_list','notice_baoming.noticeid','notice_list.id')
+            ->join('baby_info','notice_baoming.babyid','baby_info.id')
+			->join('users','notice_baoming.uid','users.id')
+			->select('notice_baoming.contacts','notice_baoming.contactmode','notice_baoming.time','baby_info.name',
+			         'users.username','users.mobile','notice_list.title')
+			->get();
+
+			foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+			
+			return $list;
+		}else if($qi_date==''){
+			$list=db::table('notice_baoming')->where('notice_baoming.time','<',$shi_date)
+			->join('notice_list','notice_baoming.noticeid','notice_list.id')
+            ->join('baby_info','notice_baoming.babyid','baby_info.id')
+			->join('users','notice_baoming.uid','users.id')
+			->select('notice_baoming.contacts','notice_baoming.contactmode','notice_baoming.time','baby_info.name',
+			         'users.username','users.mobile','notice_list.title')
+			->get();
+
+            foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+
+			return $list;
+		}else{
+			$list=db::table('notice_baoming')->where([['notice_baoming.time','<',$shi_date],['notice_baoming.time','>',$qi_date]])
+			->join('notice_list','notice_baoming.noticeid','notice_list.id')
+            ->join('baby_info','notice_baoming.babyid','baby_info.id')
+			->join('users','notice_baoming.uid','users.id')
+			->select('notice_baoming.contacts','notice_baoming.contactmode','notice_baoming.time','baby_info.name',
+			         'users.username','users.mobile','notice_list.title')
+			->get();
+			
+			foreach($list as $key=>$value){
+				$list[$key]->time = date('Y-m-d',$value->time);
+			}
+
+			return $list;
+		}
+
+
+
+
+
+		
+	}
 	
 }
 ?>

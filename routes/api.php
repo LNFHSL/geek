@@ -73,6 +73,11 @@ Route::post('geek_home/{action}', function(App\Http\Controllers\Geek_home $index
     return $index->$action();
 });
 
+//后台 财务
+Route::post('geek_pay/{action}', function(App\Http\Controllers\Geek_pay $index, $action){
+	return $index->$action();
+	});
+
 
 //通告类型增加和删除
 Route::post('notice/addNoticeType','Notice@addNoticeType');

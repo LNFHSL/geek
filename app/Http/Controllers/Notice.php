@@ -90,10 +90,10 @@ class Notice extends Controller{
     public function noticeShow(){   //通告列表
         $status=request()->input('status');
         if(!empty($status)){
-            $list=Db::table('notice_list')->where('status',$status)->paginate(10);
+            $list=Db::table('notice_list')->where('status',$status)->paginate(5);
             return $list;
         }
-        $list=Db::table('notice_list')->paginate(10);
+        $list=Db::table('notice_list')->paginate(5);
         return $list;
     }
     public function changeStatus(){ //修改通告审核状态
@@ -107,24 +107,22 @@ class Notice extends Controller{
         }
     }
     public function showJoinBaby(){ //查看通告的报名详情
-        $id=request()->input('id');
-        $list=Db::table('notice_baoming')->where('noticeid',$id)->get();
-        $n=0;
-        foreach($list as $val){
-            $baby=Db::table('baby_info')->where('id',$val->babyid)->first();
-            $msg[$n]['id']=$baby->id;
-            $msg[$n]['headpic']=$baby->headpic;
-            $msg[$n]['sex']=$baby->sex;
-            $msg[$n]['name']=$baby->name;
-            $msg[$n]['contacts']=$val->contacts;
-            $msg[$n]['contactmode']=$val->contactmode;
-            $n++;
+        $list=db::table('notice_baoming')->where('notice_baoming.noticeid',request('id'))
+        ->join('baby_info','notice_baoming.babyid','baby_info.id')
+        ->join('users','notice_baoming.uid','users.id')
+        ->select('notice_baoming.*','baby_info.name','baby_info.sex','baby_info.headpic','users.username','users.mobile')
+        ->get();
+
+        foreach($list as $key=>$value){
+            $list[$key]->time = date('Y-m-d',$value->time);
         }
-        if(!empty($msg)){
-            return $msg;
-        }else{
-            return '';
-        }
+       
+        return $list;
+     
+
+
+
+        
     }
     public function delNotice(){    //删除通告
         $id=request()->input('id');

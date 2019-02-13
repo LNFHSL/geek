@@ -118,6 +118,50 @@ class Geek_qt extends Controller{
 		$list=db::table('baby_info')->where('name',request('name'))->get();
 		return $list;
 	}
-	
+
+	public function user_list(){  //用户管理
+		$list=db::table('users')->leftJoin('vip','vip.id','=','users.member')
+		->select("users.id","users.username","users.mobile","users.type","users.member","users.image","users.score","users.money",'vip.name')
+		->orderBy('users.id', 'desc')->paginate(5);
+		return $list;
+	}
+
+	public function query_user_list(){  //查询用户
+		$classify=request('classify');
+		$classify_two=request('classify_two');
+		$input=request('input');
+
+		if($classify == 1){         
+			$list=db::table('users')->where('username','like',"%".$input."%")->leftJoin('vip','vip.id','=','users.member')
+			->select("users.id","users.username","users.mobile","users.type","users.member","users.image","users.score","users.money",'vip.name')
+			->orderBy('users.id', 'desc')->get();
+			return $list;
+		}else if($classify == 2){
+			$list=db::table('users')->where('mobile','like',"%".$input."%")->leftJoin('vip','vip.id','=','users.member')
+			->select("users.id","users.username","users.mobile","users.type","users.member","users.image","users.score","users.money",'vip.name')
+			->orderBy('users.id', 'desc')->get();
+			return $list;
+		}else{
+			$list=db::table('users')->where('type','like',"%".$classify_two."%")->leftJoin('vip','vip.id','=','users.member')
+			->select("users.id","users.username","users.mobile","users.type","users.member","users.image","users.score","users.money",'vip.name')
+			->orderBy('users.id', 'desc')->get();
+			return $list;
+		}
+	}
+
+	public function user_edit(){  //用户详情
+		$id=request('id');
+		$list=db::table('users')->where("users.id",$id)->leftJoin('vip','vip.id','=','users.member')
+		->select("users.id","users.username","users.mobile","users.type","users.member","users.image","users.score","users.money",'vip.name')
+		->first();
+		return json_encode($list);
+	}
+	public function modify_edit(){  //用户详情
+		$id=request("id");
+		$input=request()->all();
+		unset($input['id']);
+		$list=db::table('users')->where('id',$id)->update($input);
+		return $list;
+	}
 }	
 ?>

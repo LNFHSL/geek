@@ -62,6 +62,8 @@ class Active extends Controller
     //获取活动详情
     public function show(){
         $activeObj=DB::table("active_list")->where(['id'=>request('id')])->get();
+
+
         $activeObj->isPart = false;
         $activeObj->isCollection = false;
         
@@ -76,6 +78,8 @@ class Active extends Controller
                       $activeObj->isCollection = true;
                }
         }
+        
+
         return $activeObj;
     }
     //获取点击活动报名后的信息
@@ -99,7 +103,7 @@ class Active extends Controller
     public function addActiveBaby(){
         foreach (request('babyid') as $key => $value) {
             DB::table('active_baoming')->insert([
-                'babyid'=>$value['id'],'babyname'=>$value['name'],'uid'=>request('uid'),'activeid'=>request('activeid'),'connactName'=>request('connactName'),'connact'=>request('connact')
+                'babyid'=>$value['id'],'babyname'=>$value['name'],'uid'=>request('uid'),'activeid'=>request('activeid'),'connactName'=>request('connactName'),'connact'=>request('connact'),'time'=>time()
             ]);
         };
     }
