@@ -52,7 +52,7 @@ class View extends Controller
             
             // 获取推荐童星
             case 'getRecommendChild':
-                 $getRecommendChild = DB::table('baby_info')->orderBy("id","desc")->get();
+                 $getRecommendChild = DB::table('baby_info')->orderBy("id","desc")->where('Recommend',1)->get();
                  echo $getRecommendChild;
             break; 
                
