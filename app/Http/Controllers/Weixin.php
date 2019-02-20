@@ -137,8 +137,7 @@ class Weixin extends Controller
                     if ($order->type == 'vip') {
                         $title = 'vip开通';
                         $list=db::table('users')->where('id',$order->uid)->update(['member'=>$order->shop_id]);
-                              db::table('vip_time')->insert(['uid'=>$order->uid,'time'=>time()]);  //vip开通时间
-				    }elseif ($order->type == 'notice_pay') {
+                    }elseif ($order->type == 'notice_pay') {
                         $title = '发通告支付';
                         $list=db::table('notice_list')->where('id',$order->shop_id)->update(['is_pay'=>1]);
 
