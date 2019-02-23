@@ -245,24 +245,30 @@ class Weixin extends Controller
     // }
     public function gethasopen()
     {
+        
+           
         $app = EasyWeChat::officialAccount(); // 公众号
         $wxuser = $app->oauth->user();
          
          
         $user = Auth::user();
-
+       
         if ($user['id']<=0) {
+          
              $user_auto = DB::table("users")
                 ->where("openid",$wxuser->getId())
                 ->first();
 
 
-              if(Auth::attempt(['mobile' => $user_auto['mobile'], 'password' => $user_auto['password'] ])){
+              if($user_auto->openid && Auth::attempt(['openid' => $user_auto->openid ])){
                     $user = Auth::user();
                     $success['token'] =  $user->createToken('MyApp')->accessToken;
                      return (['code'=>'0','msg'=>'登录成功','token'=>$success['token'],'type'=>$user['type'],
                     'unreads'=>$user['unreads'],'openid'=>$user['openid']
                     ]);
+                }else{
+                    return (['code'=>'-1','msg'=>'密码不正确','token'=>'','type'=>'',
+                    'unreads'=>'','openid'=>'' ]);
                 }
         }else{
          $user_openid = DB::table("users")

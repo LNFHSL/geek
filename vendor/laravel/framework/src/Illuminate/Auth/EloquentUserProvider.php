@@ -123,9 +123,14 @@ class EloquentUserProvider implements UserProvider
      */
     public function validateCredentials(UserContract $user, array $credentials)
     {
-        $plain = $credentials['password'];
+        if(array_key_exists('openid',$credentials)){ //openid登陆 
+            return true; 
+        }else{
+            $plain = $credentials['password'];
 
-        return $this->hasher->check($plain, $user->getAuthPassword());
+            return $this->hasher->check($plain, $user->getAuthPassword());
+        }
+       
     }
 
     /**

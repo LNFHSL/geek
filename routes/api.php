@@ -41,6 +41,7 @@ Route::get('weixin/menu','Weixin@menu');
 Route::get('weixin/getopenid','Weixin@getopenid');
 Route::any('weixin/pay_code','Weixin@pay_code');
 
+Route::any('weixin/gethasopen','Weixin@gethasopen');
 //后台管理系统 商品
 Route::any('geek_ht/{action}', function(App\Http\Controllers\Geek_goods $index, $action){
 	return $index->$action();
@@ -149,7 +150,6 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('info', 'PassportController@getDetails');
 	
 	
-Route::get('weixin/gethasopen','Weixin@gethasopen');
 	// 获取报名时童星角色的价格类型
 	Route::post('notice/getStarsForSignUp','Notice\View@getStarsForSignUp');
 	//报名
