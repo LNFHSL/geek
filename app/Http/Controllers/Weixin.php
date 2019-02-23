@@ -57,7 +57,7 @@ class Weixin extends Controller
 
             $notify['out_trade_no']  = date('YmdHis',$time).mt_rand(1000,9999);
             $result = $app->order->unify([
-                'body' => '极客艺启',
+                'body' => '极客通告',
                 'out_trade_no' => $notify['out_trade_no'],
                 // 'total_fee' => 0.01*100,
                 'total_fee' => $price*100,
@@ -221,6 +221,28 @@ class Weixin extends Controller
         return $response;
     }
 
+    // public function gethasopen()
+    // {
+    //     $app = EasyWeChat::officialAccount(); // 公众号
+    //     $wxuser = $app->oauth->user();
+         
+         
+    //     $user = Auth::user();
+    //     $user_openid = DB::table("users")
+    //         ->where("id",$user['id'])
+    //         ->value('openid');
+    //     if (empty($user_openid)) {
+    //         $res = DB::table("users")
+    //         ->where("id",$user['id'])
+    //         ->update([
+    //             'openid'=>$wxuser->getId(),
+    //             'image'=>$wxuser->getAvatar(),
+    //             'username'=>$wxuser->getNickname(),
+    //         ]);
+    //     }    
+		
+       
+    // }
     public function gethasopen()
     {
         $app = EasyWeChat::officialAccount(); // 公众号
@@ -228,22 +250,39 @@ class Weixin extends Controller
          
          
         $user = Auth::user();
-        $user_openid = DB::table("users")
-            ->where("id",$user['id'])
-            ->value('openid');
-        if (empty($user_openid)) {
-            $res = DB::table("users")
-            ->where("id",$user['id'])
-            ->update([
-                'openid'=>$wxuser->getId(),
-                'image'=>$wxuser->getAvatar(),
-                'username'=>$wxuser->getNickname(),
-            ]);
-        }    
+
+        if ($user['id']<=0) {
+             $user_auto = DB::table("users")
+                ->where("openid",$wxuser->getId())
+                ->first();
+
+
+              if(Auth::attempt(['mobile' => $user_auto['mobile'], 'password' => $user_auto['password'] ])){
+                    $user = Auth::user();
+                    $success['token'] =  $user->createToken('MyApp')->accessToken;
+                     return (['code'=>'0','msg'=>'登录成功','token'=>$success['token'],'type'=>$user['type'],
+                    'unreads'=>$user['unreads'],'openid'=>$user['openid']
+                    ]);
+                }
+        }else{
+         $user_openid = DB::table("users")
+                ->where("id",$user['id'])
+                ->value('openid');
+            if (empty($user_openid)) {
+                $res = DB::table("users")
+                ->where("id",$user['id'])
+                ->update([
+                    'openid'=>$wxuser->getId(),
+                    'image'=>$wxuser->getAvatar(),
+                    'username'=>$wxuser->getNickname(),
+                ]);
+            } 
+        }
+
+          
 		
        
     }
-
     
     
 }
